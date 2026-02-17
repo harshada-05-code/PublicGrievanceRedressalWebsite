@@ -1,32 +1,16 @@
-# PublicGrievanceRedressalWebsite
-A multilingual, AI-assisted public grievance redressal platform connecting citizens directly to government ministries with real-time tracking and officer accountability
+# React + Vite
 
-# CivicLink 🏛️
-### Empowering Citizens, Streamlining Governance
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-**CivicLink** is a full-stack web application designed to bridge the communication gap between citizens and government authorities. It provides a transparent, user-friendly interface for reporting public issues—ranging from road infrastructure to healthcare services—and ensures they reach the correct ministry for resolution.
+Currently, two official plugins are available:
 
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 🚀 Key Features
-* **Smart Categorization:** Automatically routes grievances to the relevant Ministry (Roads, Water, Health, etc.).
-* **Real-Time Tracking:** Citizens can view assigned officers, estimated resolution times, and live status updates.
-* **Multilingual Interface:** Designed for inclusivity, supporting multiple regional languages.
-* **Accountability Loop:** Users can re-open cases or provide feedback if the outcome is unsatisfactory.
-* **Integrity Check:** Logic-based validation to distinguish between genuine reports and spam/fake submissions.
+## React Compiler
 
-## 🛠️ Tech Stack (MERN)
-* **Frontend:** React.js, Tailwind CSS (for a modern, responsive UI).
-* **Backend:** Node.js, Express.js.
-* **Database:** MongoDB (Scalable NoSQL storage for complaints).
-* **State Management:** React Hooks.
-* **Authentication:** JWT (JSON Web Tokens) for secure Citizen and Officer logins.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## 📈 Future Roadmap
-- [ ] Integration of Google Vision API for image-based proof verification.
-- [ ] SMS/WhatsApp notifications via Twilio API.
-- [ ] GIS-based heatmap for administrators to identify "problem hotspots" in the city.
+## Expanding the ESLint configuration
 
-## 👨‍💻 Author
-**[Harshada Wankhede ]**
-*Second Year CSE Student | IIIT Pune*
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
