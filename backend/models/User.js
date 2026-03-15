@@ -2,8 +2,18 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    number: { type: String, required: true, unique: true }, // unique prevents duplicate registrations
+    number: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-}, { timestamps: true }); // Automatically adds 'createdAt' and 'updatedAt'
+    role: { type: String, default: 'citizen' } // citizen or admin
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
+
+const bcrypt = require('bcryptjs');
+
+// Before saving, hash the password
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+});
