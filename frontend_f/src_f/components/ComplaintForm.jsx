@@ -40,3 +40,21 @@ export default function ComplaintForm() {
     </form>
   );
 }
+
+
+const onSubmit=async(data)=>{
+  try{
+    const response=await fetch("http://localhost:500/api/complaints",{
+      method:"POST",
+      headers:{
+        "Content-Type": "application/json",
+      },body: JSON.stringify(data),
+    });
+
+    const result=await response.json();
+    console.log(result);
+    alert("Complaint submitted successfully!");
+  }catch(error){
+    console.error(error);
+  }
+};
