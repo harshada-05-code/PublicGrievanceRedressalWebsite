@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
+const handleSubmit = (e) => {
+  e.preventDefault();
+  alert("Submitted");
+};
+
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', number: '', password: '' });
   const navigate = useNavigate();

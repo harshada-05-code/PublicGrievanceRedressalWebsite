@@ -4,7 +4,7 @@ const express=require('express');
 const adminRouter=express.Router();
 const rootDir=require('../Utils/pathUtils');
 
-const adminController=require('../controllers/adminController');    
+const adminController=require('../Controller/adminController');    
 
 adminRouter.get('/adminDashboard',(req, res) => {
     adminController.adminDashboard(req, res);

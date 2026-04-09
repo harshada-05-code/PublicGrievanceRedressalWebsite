@@ -1,14 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
+const express=require("express");
+const dotenv=require('dotenv');
+const connectDB=require('./config/db');
 
-const root=ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-const express = require("express");
+dotenv.config();
+connectDB();
+
+
+// import React from 'react';
+// import ReactDOM from 'react-dom/client';
+// import App from './App';
+
+// const root=ReactDOM.createRoot(document.getElementById('root'));
+// root.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>
+// );
+
 const cors = require("cors");
 
 const userRoutes = require("./routes/userRoutes");

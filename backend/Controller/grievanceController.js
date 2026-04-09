@@ -1,5 +1,4 @@
 const Grievance = require('../models/Grievance');
-
 // @desc    Create new grievance
 // @route   POST /api/grievances
 exports.addGrievance = async (req, res) => {

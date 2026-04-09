@@ -1,7 +1,8 @@
 const User = require('../models/User');
 const generateToken = require('../Utils/generateToken'); // Import the util
 
-exports.loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
+    console.log("Incoming Data:", req.body);
     try {
         const { number, password } = req.body;
         const user = await User.findOne({ number });
@@ -21,4 +22,14 @@ exports.loginUser = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+};
+
+const registerUser = (req, res) => {
+  res.json({ message: "Register working" });
+};
+
+
+module.exports = {
+  registerUser,
+  loginUser,
 };

@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Register from './Register';
 import Login from './Login';
 import Dashboard from './Dashboard';
-import AdminDashboard from './AdminDashboard';
 
 function App() {
   // Simple check to see if user is logged in
