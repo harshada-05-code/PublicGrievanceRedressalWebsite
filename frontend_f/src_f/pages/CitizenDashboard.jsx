@@ -3,9 +3,11 @@ import {
   Search, Bell, FilePlus, Search as SearchIcon, 
   FileText, Hourglass, CheckSquare, Building
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import './DashboardUI.css';
 
 const CitizenDashboard = ({ userInfo }) => {
+  const navigate = useNavigate();
   const [complaints] = useState([
     { id: 'CP-20231026-01', subject: 'Pothole in Sector 7', date: '26 Oct 2023', dept: 'Public Works', status: 'In Progress', action: 'View Details' },
     { id: 'CP-20231024-05', subject: 'Water Supply Issue', date: '24 Oct 2023', dept: 'Water Authority', status: 'Resolution Received', action: 'View Resolution' },
@@ -36,7 +38,7 @@ const CitizenDashboard = ({ userInfo }) => {
 
         {/* Action Cards */}
         <div className="action-cards">
-          <div className="action-card primary">
+          <div className="action-card primary" onClick={() => navigate('/file-complaint')}>
             <div className="ac-icon"><FilePlus /></div>
             <div>
               <h3>File a New Complaint</h3>

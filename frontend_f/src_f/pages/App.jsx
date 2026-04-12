@@ -4,6 +4,7 @@ import Register from './Register';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import Landing from './Landing';
+import FileComplaint from './FileComplaint';
 
 function App() {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
@@ -17,10 +18,14 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Protected Route */}
+          {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={userInfo ? <Dashboard /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/file-complaint"
+            element={userInfo ? <FileComplaint /> : <Navigate to="/login" replace />}
           />
 
           {/* Redirects */}
