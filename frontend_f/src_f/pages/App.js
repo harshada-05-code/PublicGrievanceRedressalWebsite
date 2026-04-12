@@ -1,25 +1,24 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register'; // Import the new page
-import Dashboard from './pages/Dashboard';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './Login';
+import Register from './Register';
+import Dashboard from './Dashboard';
 
 function App() {
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
+
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        {/* Default route to redirect to login */}
-        <Route path="/" element={<Register />} />
+        <Route path="/dashboard" element={userInfo ? <Dashboard /> : <Navigate to="/login" replace />} />
+        <Route path="/" element={userInfo ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+        <Route path="*" element={userInfo ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
 }
 
-const logout = () => {
-  localStorage.removeItem('userInfo');
-  window.location.href = '/login';
-};
+export default App;
 
 export default App;

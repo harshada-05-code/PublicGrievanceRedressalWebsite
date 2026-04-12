@@ -14,18 +14,16 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/users/login', formData);
+      const { data } = await axios.post('http://localhost:5000/api/users/login', formData);
       
-      // Save user data (including token) to localStorage
       localStorage.setItem('userInfo', JSON.stringify(data));
       
-      alert("Welcome back, " + data.name);
+      alert('Welcome back, ' + data.name);
       
-      // Redirect based on role
       if (data.role === 'admin') {
-        navigate('/admin');
+        navigate('/admin', { replace: true });
       } else {
-        navigate('/dashboard');
+        navigate('/dashboard', { replace: true });
       }
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");

@@ -12,7 +12,7 @@ const Dashboard = () => {
   const fetchGrievances = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-      const { data } = await axios.get('/api/grievances/my', config);
+      const { data } = await axios.get('http://localhost:5000/api/grievances/my', config);
       setGrievances(data.data);
     } catch (err) {
       console.error("Error fetching grievances", err);
@@ -28,7 +28,7 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-      await axios.post('/api/grievances', formData, config);
+      await axios.post('http://localhost:5000/api/grievances', formData, config);
       alert("Complaint Submitted Successfully!");
       setFormData({ title: '', description: '', category: 'Roads', address: '' }); // Reset form
       fetchGrievances(); // Refresh list

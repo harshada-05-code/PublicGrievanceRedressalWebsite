@@ -5,8 +5,7 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 
 function App() {
-  // Simple check to see if user is logged in
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
 
   return (
     <Router>
@@ -16,19 +15,15 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Protected Routes - Only show if logged in */}
-          <Route 
-            path="/dashboard" 
-            element={userInfo ? <Dashboard /> : <Navigate to="/login" />} 
-          />
-          
-          <Route 
-            path="/admin" 
-            element={userInfo?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" />} 
+          {/* Protected Route */}
+          <Route
+            path="/dashboard"
+            element={userInfo ? <Dashboard /> : <Navigate to="/login" replace />}
           />
 
-          {/* Default Route */}
-          <Route path="/" element={<Navigate to="/register" />} />
+          {/* Redirects */}
+          <Route path="/" element={userInfo ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+          <Route path="*" element={userInfo ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
         </Routes>
       </div>
     </Router>
