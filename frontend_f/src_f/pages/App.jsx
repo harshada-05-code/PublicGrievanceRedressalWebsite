@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Register from './Register';
 import Login from './Login';
 import Dashboard from './Dashboard';
+import Landing from './Landing';
 
 function App() {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
@@ -12,6 +13,7 @@ function App() {
       <div className="App">
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<Landing />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
 
@@ -22,8 +24,7 @@ function App() {
           />
 
           {/* Redirects */}
-          <Route path="/" element={userInfo ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
-          <Route path="*" element={userInfo ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+          <Route path="*" element={userInfo ? <Navigate to="/dashboard" replace /> : <Navigate to="/" replace />} />
         </Routes>
       </div>
     </Router>

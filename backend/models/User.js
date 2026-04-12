@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     number: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, default: 'citizen' } // citizen or admin
+    role: { type: String, default: 'citizen', enum: ['citizen', 'admin', 'department_officer'] },
+    departmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' }
 }, { timestamps: true });
 
 // Before saving, hash the password

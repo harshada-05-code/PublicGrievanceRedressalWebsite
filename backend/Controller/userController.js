@@ -1,11 +1,11 @@
 const bcrypt = require('bcryptjs');
 const generateToken = require('../Utils/generateToken');
-const { addUser, findUserByNumber } = require('../data/store');
+const User = require('../models/User');
 
 const loginUser = async (req, res) => {
     try {
         const { number, password } = req.body;
-        const user = findUserByNumber(number);
+        const user = await User.findOne({ number });
 
         if (!user) {
             return res.status(401).json({ message: 'Invalid number or password' });
@@ -22,6 +22,7 @@ const loginUser = async (req, res) => {
             name: user.name,
             number: user.number,
             role: user.role,
+            departmentId: user.departmentId,
             token: generateToken(user._id),
         });
     } catch (error) {
@@ -31,19 +32,26 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
     try {
-        const { name, number, password } = req.body;
+        const { name, number, password, role, departmentId } = req.body;
 
         if (!name || !number || !password) {
             return res.status(400).json({ message: 'Please provide name, number, and password' });
         }
 
-        const existingUser = findUserByNumber(number);
+        const existingUser = await User.findOne({ number });
         if (existingUser) {
             return res.status(400).json({ message: 'Number already registered' });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = addUser({ name, number, password: hashedPassword });
+        const user = new User({
+            name,
+            number,
+            password,
+            role: role || 'citizen',
+            departmentId: role === 'department_officer' ? departmentId : undefined
+        });
+
+        await user.save();
 
         res.status(201).json({
             success: true,
@@ -51,6 +59,7 @@ const registerUser = async (req, res) => {
             name: user.name,
             number: user.number,
             role: user.role,
+            departmentId: user.departmentId,
             token: generateToken(user._id),
         });
     } catch (error) {
