@@ -522,3 +522,700 @@
 .mb-bar { width: 30px; border-radius: 2px 2px 0 0;}
 .mb-bar.dark-green { background: #0d5c2c;}
 .mb-bar.light-green { background: #a7f3d0;}
+
+/* --- Civic Link Portal Admin UI Styles --- */
+.admin-portal-container {
+  min-height: 100vh;
+  background-color: #faf9f6;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #111;
+}
+
+.cl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: white;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.cl-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cl-logo-badge {
+  background-color: #0d5c2c;
+  color: white;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.375rem;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.cl-logo-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.cl-search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f3f4f6;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  width: 300px;
+}
+
+.cl-search-container .search-icon {
+  color: #6b7280;
+}
+
+.cl-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+}
+
+.cl-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.cl-notify-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid #eaeaea;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #111;
+}
+
+.cl-profile-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: #111;
+}
+
+.cl-main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.cl-welcome-section {
+  margin-bottom: 2rem;
+}
+
+.cl-welcome-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0d5c2c;
+  margin-bottom: 0.25rem;
+}
+
+.cl-welcome-subtitle {
+  color: #4b5563;
+  font-size: 1rem;
+}
+
+.cl-action-cards-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.cl-action-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.cl-action-card.primary {
+  background-color: #0d5c2c;
+  color: white;
+}
+
+.cl-action-card.secondary {
+  background-color: #e2e8f0;
+  color: #111;
+}
+
+.cl-ac-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.cl-ac-icon.secondary-icon {
+  border: 1px solid #cbd5e1;
+  background-color: #cbd5e1;
+}
+
+.cl-ac-text h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.cl-ac-text p {
+  opacity: 0.9;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cl-action-card.secondary .cl-ac-text p {
+  color: #4b5563;
+}
+
+.cl-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.cl-stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.cl-stat-card.border-bottom-green {
+  border-bottom: 5px solid #0d5c2c;
+}
+
+.cl-stat-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.cl-stat-val-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cl-stat-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #111;
+  line-height: 1;
+}
+
+.cl-log-card {
+  padding: 1rem 1.5rem;
+}
+
+.cl-activity-log {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cl-activity-log li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.log-time {
+  color: #6b7280;
+}
+
+.log-action {
+  color: #111;
+  font-weight: 500;
+}
+
+.cl-data-section {
+  margin-bottom: 2rem;
+}
+
+.cl-section-title {
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.cl-table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.cl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cl-table th, .cl-table td {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.95rem;
+}
+
+.cl-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.cl-action-link.green {
+  color: #0d5c2c;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cl-action-link.green:hover {
+  text-decoration: underline;
+}
+
+/* --- Civic Link Portal Officer Specific UI --- */
+.cl-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.cl-badge-high {
+  background-color: #ef4444;
+  color: white;
+}
+
+.cl-badge-medium {
+  background-color: #eab308;
+  color: white;
+}
+
+.cl-badge-low {
+  background-color: #22c55e;
+  color: #fff;
+}
+
+/* Pie Chart Layout */
+.cl-pie-card-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.cl-pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cl-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.cl-legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.cl-pie-visual {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #ef4444 0% 15%,     
+    #eab308 15% 45%,    
+    #22c55e 45% 100%    
+  );
+  box-shadow: inset 0 0 0 2px white;
+  border: 2px solid white;
+}
+
+/* --- Officer Performance Report Layout --- */
+.report-page-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #111;
+}
+
+.report-sidebar {
+  width: 60px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem 0;
+  align-items: center;
+}
+
+.sidebar-top, .sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sidebar-btn:hover { background: #f3f4f6; }
+.sidebar-btn.active { background: #eff6ff; color: #2563eb; }
+
+.report-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.report-header {
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+.report-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon-action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-icon {
+  width: 32px;
+  height: 32px;
+  background: #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.report-main-body {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.report-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #111;
+}
+
+.report-panel {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.panel-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Semi-Circle Gauges */
+.metrics-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.metric-cell {
+  text-align: center;
+  flex: 1;
+}
+
+.metric-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.gauge-container {
+  position: relative;
+  width: 160px;
+  height: 80px;
+  margin: 0 auto 0.5rem;
+  overflow: hidden;
+}
+
+.gauge-bg, .gauge-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.gauge-bg {
+  border: 12px solid #f3f4f6;
+}
+
+.gauge-fill {
+  border: 12px solid transparent;
+  transform: rotate(45deg);
+}
+
+.gauge-green { border-top-color: #0d5c2c; border-left-color: #0d5c2c; border-right-color: #0d5c2c; }
+.gauge-orange { border-top-color: #f97316; border-left-color: #f97316; }
+.gauge-yellow { border-top-color: #eab308; border-left-color: #eab308; }
+
+.gauge-cover {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 136px;
+  height: 136px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.gauge-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: -60px; /* pull up into semi-circle */
+}
+
+.gauge-star {
+  margin-top: -40px;
+  margin-bottom: 2px;
+}
+
+.metric-subtext {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Double Row Layout */
+.charts-double-row, .feedback-double-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.flex-2 { flex: 2; }
+.flex-1 { flex: 1; }
+
+.chart-legend-center {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.legend-p {
+  font-size: 0.8rem;
+  margin: 0 0.5rem;
+}
+
+.c-box {
+  display: inline-block;
+  width: 16px;
+  height: 8px;
+  margin-right: 4px;
+}
+
+.bg-green { background: #22c55e; }
+.bg-gray { background: #9ca3af; }
+
+/* CSS Bar Chart */
+.css-bar-chart-container {
+  display: flex;
+  height: 200px;
+  align-items: flex-end;
+  position: relative;
+  padding-left: 30px;
+}
+
+.y-axis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+.x-axis-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: space-around;
+  align-items: flex-end;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.bar-group {
+  display: flex;
+  align-items: flex-end;
+  height: 90%;
+  position: relative;
+  width: 40px;
+  justify-content: space-between;
+}
+
+.bar {
+  width: 16px;
+  border-radius: 2px 2px 0 0;
+}
+
+.green-bar { background: #22c55e; }
+.gray-bar { background: #9ca3af; }
+
+.x-label {
+  position: absolute;
+  bottom: -25px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+/* Report Pie Chart */
+.pie-chart-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.report-pie {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #22c55e 0% 35%,
+    #f97316 35% 60%,
+    #eab308 60% 80%,
+    #9ca3af 80% 100%
+  );
+}
+
+.pie-label {
+  position: absolute;
+  font-size: 0.65rem;
+  color: white;
+  text-align: center;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.l-1 { top: 20%; left: 70%; }
+.l-2 { bottom: 20%; left: 60%; }
+.l-3 { bottom: 20%; right: 60%; }
+.l-4 { top: 20%; right: 70%; }
+
+.pie-legend-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Bottom elements */
+.achievement-list {
+  list-style: none;
+  padding: 0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: #374151;
+}
+
+.stars-row {
+  display: flex;
+  gap: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.feedback-quote {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #4b5563;
+  border-left: 3px solid #3b82f6;
+  padding-left: 0.75rem;
+  margin: 0;
+}
+
+.report-footer-tag {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bg-green-badge {
+  background: #22c55e;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0.2rem;
+}

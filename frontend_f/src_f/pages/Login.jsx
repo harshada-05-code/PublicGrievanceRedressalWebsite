@@ -28,11 +28,7 @@ const Login = () => {
       
       alert('Welcome back, ' + user.name);
       
-      if (user.role === 'admin') {
-        navigate('/admin', { replace: true });
-      } else {
-        navigate('/dashboard', { replace: true });
-      }
+      navigate('/dashboard', { replace: true });
     } else {
       alert("Invalid phone number or password. Please try again.");
     }

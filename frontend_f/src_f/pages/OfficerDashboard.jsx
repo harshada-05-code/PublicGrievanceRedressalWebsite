@@ -1,121 +1,152 @@
 import React from 'react';
-import { AlertCircle, CheckCircle2, Clock, ThumbsUp } from 'lucide-react';
+import { Search, Bell, Briefcase, BarChart2, User, ClipboardList, Trophy, ChevronDown } from 'lucide-react';
 import './DashboardUI.css';
+import { useNavigate } from 'react-router-dom';
 
 const OfficerDashboard = () => {
+  const navigate = useNavigate();
   return (
-    <div className="dashboard-container">
-      {/* Header */}
-      <header className="dash-header flex-spread">
-        <div className="logo-container">
-          <span className="logo-badge">JP</span>
-          <span style={{fontWeight: 700}}>Jan Shikayat Portal</span>
+    <div className="admin-portal-container">
+      {/* Header (Shared style with Admin) */}
+      <header className="cl-header">
+        <div className="cl-logo-container">
+          <div className="cl-logo-badge">CL</div>
+          <span className="cl-logo-text">Civic Link Portal</span>
         </div>
-        <div className="header-actions">
-          <button className="lang-btn" style={{border:'none', background:'transparent'}}>हिंदी में देखें</button>
-          <div className="profile-menu">Login</div>
-          <div className="profile-menu" style={{background:'#0d5c2c', color:'white', padding: '0.4rem 1rem', borderRadius:'6px'}}>Register</div>
+        
+        <div className="cl-search-container">
+          <Search size={18} className="search-icon" />
+          <input type="text" placeholder="Search" className="cl-search-input" />
+        </div>
+
+        <div className="cl-header-actions">
+          <button className="cl-notify-btn">
+            <Bell size={18} />
+            Notifications
+          </button>
+          <div className="cl-profile-dropdown">
+            My Profile <ChevronDown size={14} />
+          </div>
         </div>
       </header>
 
-      <main className="dash-content">
-        <h1 className="welcome-title text-green" style={{fontSize: '1.4rem', marginBottom:'0.5rem'}}>Department Officer Dashboard (Water Supply Dept.)</h1>
-        
-        {/* Officer Stats */}
-        <div className="officer-stats-row">
-          <div className="off-stat"><FileIcon fill="#ef4444"/> Pending: <strong>28</strong></div>
-          <div className="off-stat"><AlertCircle size={16} color="#ef4444"/> Urgent: <strong>5</strong></div>
-          <div className="off-stat"><CheckCircle2 size={16} color="#10b981"/> Resolved (this month): <strong>112</strong></div>
-          <div className="off-stat"><ThumbsUp size={16} color="#10b981"/> Citizen Satisfaction (last month): <strong>4.2/5</strong></div>
+      <main className="cl-main-content">
+        {/* Welcome Section */}
+        <div className="cl-welcome-section">
+          <h1 className="cl-welcome-title">Welcome, Officer Singh.</h1>
         </div>
 
-        {/* Filters */}
-        <div className="officer-filters">
-          <div className="flex-row">
-            <span className="filter-text">Sort By:</span>
-            <select><option>Newest</option></select>
-            <span className="filter-text">Filter:</span>
-            <select><option>All</option></select>
+        {/* Big Action Cards */}
+        <div className="cl-action-cards-row">
+          <div className="cl-action-card primary">
+            <div className="cl-ac-icon" style={{borderColor: 'rgba(255,255,255,0.4)', background: 'transparent'}}>
+              <Briefcase size={24} />
+            </div>
+            <div className="cl-ac-text">
+              <h2>View My Assigned Cases</h2>
+            </div>
           </div>
-          <div className="urgent-badge"><AlertCircle size={14}/> Urgent (Red Alerts)</div>
+          <div className="cl-action-card primary" onClick={() => navigate('/officer-report')}>
+            <div className="cl-ac-icon" style={{borderColor: 'rgba(255,255,255,0.4)', background: 'transparent'}}>
+              <BarChart2 size={24} />
+            </div>
+            <div className="cl-ac-text">
+              <h2>Generate Performance Report</h2>
+            </div>
+          </div>
         </div>
 
-        <div className="officer-grid">
-          <div className="complaint-cards-col">
-            <h2 style={{fontSize:'1.1rem', marginBottom:'1rem'}}>Pending Complaints</h2>
-            
-            <div className="complaint-card">
-              <div className="card-top">
-                <span className="comp-id">Complaint #JP-WS-23-0104</span>
-                <span className="status-icon red"><AlertCircle size={16}/></span>
-              </div>
-              <h3 className="comp-subject">Pipeline Leak - Sector 7</h3>
-              <div className="comp-meta red-text">Awaiting Action</div>
-              <div className="comp-meta">Filed: 2h ago by Rajesh K.</div>
-              <button className="btn-solid green">Review and Assign</button>
+        {/* Statistics & Logs Row */}
+        <div className="cl-stats-row">
+          <div className="cl-stat-card border-bottom-green">
+            <div className="cl-stat-label">Complaints Assigned to You</div>
+            <div className="cl-stat-val-row">
+              <span className="cl-stat-number">5</span>
+              <User size={24} color="#0d5c2c" />
             </div>
-
-            <div className="complaint-card">
-              <div className="card-top">
-                <span className="comp-id">Complaint #JP-WS-23-0102</span>
-                <span className="status-icon yellow"><Clock size={16}/></span>
-              </div>
-              <h3 className="comp-subject">Low Water Pressure - Nehru Colony</h3>
-              <div className="comp-meta yellow-text">Under Investigation</div>
-              <div className="comp-meta">Filed: 1d ago by Priya S.</div>
-              <div className="btn-row">
-                <button className="btn-solid yellow-btn">Send for Clarification</button>
-                <button className="btn-solid dark">Close</button>
-              </div>
-            </div>
-
-            <div className="complaint-card">
-              <div className="card-top">
-                <span className="comp-id">Complaint #JP-WS-23-0098</span>
-                <span className="status-icon green-icon"><CheckCircle2 size={16}/></span>
-              </div>
-              <h3 className="comp-subject">Billing Discrepancy</h3>
-              <div className="comp-meta green-text">Resolution Submitted (Reviewing)</div>
-              <div className="comp-meta">Filed: 3d ago by Amit G.</div>
-              <button className="btn-solid green">Approve Resolution</button>
+          </div>
+          
+          <div className="cl-stat-card border-bottom-green">
+            <div className="cl-stat-label">Pending Your Approval</div>
+            <div className="cl-stat-val-row">
+              <span className="cl-stat-number">2</span>
+              <ClipboardList size={24} color="#0d5c2c" />
             </div>
           </div>
 
-          <div className="officer-side-col">
-            <div className="side-card">
-              <h3 style={{fontSize:'1rem'}}>Grievance Cycle Time Trends</h3>
-              <div className="mini-chart">
-                 {/* Mini bars logic */}
-                 <div className="mb-label">Average Processing Days in Last 2 months</div>
-                 <div className="mb-chart">
-                    <div className="mb-col"><div className="mb-bar dark-green" style={{height:'60px'}}></div><div className="mb-bar light-green" style={{height:'40px'}}></div><span>Dec</span></div>
-                    <div className="mb-col"><div className="mb-bar dark-green" style={{height:'80px'}}></div><div className="mb-bar light-green" style={{height:'45px'}}></div><span>Jan - Feb</span></div>
-                 </div>
+          <div className="cl-stat-card border-bottom-green">
+            <div className="cl-stat-label">Complaints Resolved this Month</div>
+            <div className="cl-stat-val-row">
+              <span className="cl-stat-number">18</span>
+              <Trophy size={24} color="#0d5c2c" />
+            </div>
+          </div>
+
+          {/* Pie Chart Card */}
+          <div className="cl-stat-card" style={{justifyContent: 'center', padding: '1rem'}}>
+            <div className="cl-stat-label" style={{marginBottom: '0.4rem', color: '#111', fontWeight: 600}}>My Assigned Case Priority</div>
+            <div className="cl-pie-card-inner">
+              <div className="cl-pie-legend">
+                <div className="cl-legend-item"><span className="cl-legend-color" style={{backgroundColor: '#ef4444'}}></span> High</div>
+                <div className="cl-legend-item"><span className="cl-legend-color" style={{backgroundColor: '#eab308'}}></span> Medium</div>
+                <div className="cl-legend-item"><span className="cl-legend-color" style={{backgroundColor: '#22c55e'}}></span> Low</div>
               </div>
+              <div className="cl-pie-visual"></div>
             </div>
-            <div className="side-card">
-              <h3 style={{fontSize:'1rem'}}>Recent Department Announcements</h3>
-              <ul className="announcements">
-                <li>Updated PWD coordination guidelines</li>
-                <li>Updated PWD coordination updates</li>
-                <li>Updated PWD coordination guidelines</li>
-              </ul>
-            </div>
+          </div>
+        </div>
+
+        {/* Data Table Area */}
+        <div className="cl-data-section">
+          <h3 className="cl-section-title">My Cases Todo List</h3>
+          <div className="cl-table-container">
+            <table className="cl-table">
+              <thead>
+                <tr>
+                  <th>Case ID</th>
+                  <th>Description</th>
+                  <th>Date Received</th>
+                  <th>Reported By</th>
+                  <th>Priority</th>
+                  <th>Current Status</th>
+                  <th>Next Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>7150009</td>
+                  <td>Investigate Description</td>
+                  <td>04-07-2023</td>
+                  <td>Andra Kumar</td>
+                  <td><span className="cl-badge cl-badge-high">High</span></td>
+                  <td>Assigned</td>
+                  <td><a href="#" className="cl-action-link green">Investigate Site</a></td>
+                </tr>
+                <tr>
+                  <td>7150002</td>
+                  <td>Currenfiled Description</td>
+                  <td>16-07-2023</td>
+                  <td>Andra Kumar</td>
+                  <td><span className="cl-badge cl-badge-medium">Medium</span></td>
+                  <td>In Progress</td>
+                  <td><a href="#" className="cl-action-link green">Review Evidence</a></td>
+                </tr>
+                <tr>
+                  <td>7150003</td>
+                  <td>Review Closet Description</td>
+                  <td>16-07-2023</td>
+                  <td>Andra Kumar</td>
+                  <td><span className="cl-badge cl-badge-low">Low</span></td>
+                  <td>Awaiting Closure</td>
+                  <td><a href="#" className="cl-action-link green">Close Case</a></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </main>
     </div>
   );
 };
-
-const FileIcon = ({fill}) => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-    <polyline points="14 2 14 8 20 8"></polyline>
-    <line x1="16" y1="13" x2="8" y2="13" fill={fill}></line>
-    <line x1="16" y1="17" x2="8" y2="17" fill={fill}></line>
-    <polyline points="10 9 9 9 8 9" fill={fill}></polyline>
-  </svg>
-)
 
 export default OfficerDashboard;

@@ -62,8 +62,8 @@ const Register = () => {
                 </button>
                 <button 
                   type="button" 
-                  className={`account-type-btn ${formData.role === 'officer' ? 'active' : ''}`}
-                  onClick={() => setFormData({...formData, role: 'officer'})}
+                  className={`account-type-btn ${formData.role === 'department_officer' ? 'active' : ''}`}
+                  onClick={() => setFormData({...formData, role: 'department_officer'})}
                 >
                   <ShieldCheck size={18} /> Officer
                 </button>
