@@ -9,6 +9,7 @@ import TrackComplaint from './TrackComplaint';
 import OfficerReport from './OfficerReport';
 import ManageUsers from './ManageUsers';
 import SystemConfiguration from './SystemConfiguration';
+import OfficerCases from './OfficerCases';
 
 function App() {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
@@ -46,6 +47,10 @@ function App() {
           <Route
             path="/system-configuration"
             element={userInfo && userInfo.role === 'admin' ? <SystemConfiguration /> : <Navigate to="/dashboard" replace />}
+          />
+          <Route
+            path="/officer-cases"
+            element={userInfo && userInfo.role === 'department_officer' ? <OfficerCases /> : <Navigate to="/dashboard" replace />}
           />
 
           {/* Redirects */}

@@ -8,6 +8,11 @@ import './DashboardUI.css';
 
 const CitizenDashboard = ({ userInfo }) => {
   const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    localStorage.removeItem('userInfo');
+    navigate('/login');
+  };
   const [complaints] = useState([
     // { id: 'CP-20231026-01', subject: 'Pothole in Sector 7', date: '26 Oct 2023', dept: 'Public Works', status: 'In Progress', action: 'View Details' },
     // { id: 'CP-20231024-05', subject: 'Water Supply Issue', date: '24 Oct 2023', dept: 'Water Authority', status: 'Resolution Received', action: 'View Resolution' },
@@ -28,7 +33,7 @@ const CitizenDashboard = ({ userInfo }) => {
             <input type="text" placeholder="Search" />
           </div>
           <button className="icon-btn"><Bell size={18} /> Notifications</button>
-          <div className="profile-menu">My Profile ▾</div>
+          <div className="profile-menu" onClick={handleSignOut} style={{cursor: 'pointer', color: '#b91c1c', fontWeight: 600}}>Sign Out ▾</div>
         </div>
       </header>
 

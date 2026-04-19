@@ -5,6 +5,11 @@ import { useNavigate } from 'react-router-dom';
 
 const OfficerDashboard = () => {
   const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    localStorage.removeItem('userInfo');
+    navigate('/login');
+  };
   return (
     <div className="admin-portal-container">
       {/* Header (Shared style with Admin) */}
@@ -24,8 +29,8 @@ const OfficerDashboard = () => {
             <Bell size={18} />
             Notifications
           </button>
-          <div className="cl-profile-dropdown">
-            My Profile <ChevronDown size={14} />
+          <div className="cl-profile-dropdown" onClick={handleSignOut} style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#b91c1c', fontWeight: 600}}>
+            Sign Out <ChevronDown size={14} />
           </div>
         </div>
       </header>
@@ -38,7 +43,7 @@ const OfficerDashboard = () => {
 
         {/* Big Action Cards */}
         <div className="cl-action-cards-row">
-          <div className="cl-action-card primary">
+          <div className="cl-action-card primary" onClick={() => navigate('/officer-cases')}>
             <div className="cl-ac-icon" style={{borderColor: 'rgba(255,255,255,0.4)', background: 'transparent'}}>
               <Briefcase size={24} />
             </div>
@@ -120,7 +125,7 @@ const OfficerDashboard = () => {
                   <td>Andra Kumar</td>
                   <td><span className="cl-badge cl-badge-high">High</span></td>
                   <td>Assigned</td>
-                  <td><a href="#" className="cl-action-link green">Investigate Site</a></td>
+                  <td><button onClick={() => navigate('/officer-cases')} className="cl-action-link green" style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}>Investigate Site</button></td>
                 </tr>
                 <tr>
                   <td>7150002</td>
@@ -129,7 +134,7 @@ const OfficerDashboard = () => {
                   <td>Andra Kumar</td>
                   <td><span className="cl-badge cl-badge-medium">Medium</span></td>
                   <td>In Progress</td>
-                  <td><a href="#" className="cl-action-link green">Review Evidence</a></td>
+                  <td><button onClick={() => navigate('/officer-cases')} className="cl-action-link green" style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}>Review Evidence</button></td>
                 </tr>
                 <tr>
                   <td>7150003</td>
@@ -138,7 +143,7 @@ const OfficerDashboard = () => {
                   <td>Andra Kumar</td>
                   <td><span className="cl-badge cl-badge-low">Low</span></td>
                   <td>Awaiting Closure</td>
-                  <td><a href="#" className="cl-action-link green">Close Case</a></td>
+                  <td><button onClick={() => navigate('/officer-cases')} className="cl-action-link green" style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}>Close Case</button></td>
                 </tr>
               </tbody>
             </table>
