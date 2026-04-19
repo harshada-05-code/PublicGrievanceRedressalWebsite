@@ -5,7 +5,7 @@ const User = require('../models/User');
 const loginUser = async (req, res) => {
     try {
         const { number, password } = req.body;
-        const user = await User.findOne({ number });
+        const user = await User.findOne({ where: { number } });
 
         if (!user) {
             return res.status(401).json({ message: 'Invalid number or password' });
@@ -18,12 +18,12 @@ const loginUser = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            _id: user._id,
+            _id: user.id,
             name: user.name,
             number: user.number,
             role: user.role,
             departmentId: user.departmentId,
-            token: generateToken(user._id),
+            token: generateToken(user.id),
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -38,29 +38,22 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'Please provide name, number, and password' });
         }
 
-        const existingUser = await User.findOne({ number });
+        const existingUser = await User.findOne({ where: { number } });
         if (existingUser) {
             return res.status(400).json({ message: 'Number already registered' });
         }
 
-        const user = new User({
-            name,
-            number,
-            password,
-            role: role || 'citizen',
-            departmentId: role === 'department_officer' ? departmentId : undefined
-        });
-
-        await user.save();
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({ name, number, password: hashedPassword, role, departmentId });
 
         res.status(201).json({
             success: true,
-            _id: user._id,
+            _id: user.id,
             name: user.name,
             number: user.number,
             role: user.role,
             departmentId: user.departmentId,
-            token: generateToken(user._id),
+            token: generateToken(user.id),
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

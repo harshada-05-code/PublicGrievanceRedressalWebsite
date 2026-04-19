@@ -1,20 +1,15 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
 
-const userSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    number: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, default: 'citizen', enum: ['citizen', 'admin', 'department_officer'] },
-    departmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' }
-}, { timestamps: true });
-
-// Before saving, hash the password
-userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) return next();
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
+const User = sequelize.define('User', {
+  name: { type: DataTypes.STRING, allowNull: false },
+  number: { type: DataTypes.STRING, allowNull: false, unique: true },
+  password: { type: DataTypes.STRING, allowNull: false },
+  role: { type: DataTypes.ENUM('citizen', 'admin', 'department_officer'), defaultValue: 'citizen' },
+  departmentId: { type: DataTypes.INTEGER, allowNull: true },
+}, {
+  timestamps: true,
+  tableName: 'users',
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = User;

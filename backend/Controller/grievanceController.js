@@ -3,7 +3,6 @@ const User = require('../models/User');
 
 // @desc    Create new grievance
 // @route   POST /api/grievances
-// Note: image upload logic (multer) will be integrated here later.
 exports.addGrievance = async (req, res) => {
     try {
         const { title, description, category, address } = req.body;
@@ -13,14 +12,13 @@ exports.addGrievance = async (req, res) => {
             return res.status(401).json({ message: 'Not authorized' });
         }
 
-        // Process uploaded images into local URLs
         let imageUrls = [];
         if (req.files && req.files.length > 0) {
             imageUrls = req.files.map(file => `/uploads/${file.filename}`);
         }
 
-        const grievance = new Grievance({
-            user: userId,
+        const createdGrievance = await Grievance.create({
+            userId,
             title,
             description,
             category,
@@ -28,7 +26,6 @@ exports.addGrievance = async (req, res) => {
             imageUrls,
         });
 
-        const createdGrievance = await grievance.save();
         res.status(201).json({ success: true, data: createdGrievance });
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -45,10 +42,13 @@ exports.getMyGrievances = async (req, res) => {
             return res.status(401).json({ message: 'Not authorized' });
         }
 
-        const grievances = await Grievance.find({ user: userId })
-            .populate('departmentId', 'name')
-            .populate('assignedOfficerId', 'name');
-            
+        const grievances = await Grievance.findAll({
+            where: { userId },
+            include: [
+                { model: User, attributes: ['name', 'number'] },
+            ],
+        });
+
         res.status(200).json({ success: true, data: grievances });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -58,10 +58,11 @@ exports.getMyGrievances = async (req, res) => {
 // @desc    Get ALL grievances (Admin / Global)
 exports.getAllGrievances = async (req, res) => {
     try {
-        const grievances = await Grievance.find({})
-            .populate('user', 'name number')
-            .populate('departmentId', 'name')
-            .populate('assignedOfficerId', 'name');
+        const grievances = await Grievance.findAll({
+            include: [
+                { model: User, attributes: ['name', 'number'] },
+            ],
+        });
 
         res.status(200).json({ success: true, data: grievances });
     } catch (error) {
@@ -73,18 +74,18 @@ exports.getAllGrievances = async (req, res) => {
 exports.updateGrievanceStatus = async (req, res) => {
     try {
         const { status, remarks } = req.body;
-        const grievance = await Grievance.findById(req.params.id);
+        const grievance = await Grievance.findByPk(req.params.id);
 
         if (grievance) {
             grievance.status = status;
-            
-            // Push history log
-            if (remarks || status) {
-                grievance.history.push({
-                    status: status,
-                    remarks: remarks || `Status updated to ${status}`
-                });
-            }
+
+            const history = Array.isArray(grievance.history) ? grievance.history : [];
+            history.push({
+                status,
+                updatedAt: new Date(),
+                remarks: remarks || `Status updated to ${status}`,
+            });
+            grievance.history = history;
 
             const updatedGrievance = await grievance.save();
             res.json({ success: true, data: updatedGrievance });

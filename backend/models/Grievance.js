@@ -1,40 +1,26 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
+const User = require('./User');
 
-const grievanceSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  assignedOfficerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  departmentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Department'
-  },
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  category: {
-    type: String,
-    required: true,
-    enum: ['Roads', 'Water', 'Electricity', 'Waste', 'Other'],
-  },
-  status: { type: String, default: 'Pending', enum: ['Pending', 'Assigned', 'In Progress', 'Resolved', 'Reopened'] },
-  address: { type: String, required: true },
-  imageUrls: [{ type: String }],
-  feedback: {
-    rating: { type: Number, min: 1, max: 5 },
-    comments: { type: String }
-  },
-  history: [{
-    status: String,
-    updatedAt: { type: Date, default: Date.now },
-    remarks: String
-  }],
-},
-{ timestamps: true }
-);
+const Grievance = sequelize.define('Grievance', {
+  userId: { type: DataTypes.INTEGER, allowNull: false },
+  assignedOfficerId: { type: DataTypes.INTEGER, allowNull: true },
+  departmentId: { type: DataTypes.INTEGER, allowNull: true },
+  title: { type: DataTypes.STRING, allowNull: false },
+  description: { type: DataTypes.TEXT, allowNull: false },
+  category: { type: DataTypes.ENUM('Roads', 'Water', 'Electricity', 'Waste', 'Other'), allowNull: false },
+  status: { type: DataTypes.ENUM('Pending', 'Assigned', 'In Progress', 'Resolved', 'Reopened'), defaultValue: 'Pending' },
+  address: { type: DataTypes.STRING, allowNull: false },
+  imageUrls: { type: DataTypes.TEXT, allowNull: true },
+  feedbackRating: { type: DataTypes.INTEGER, allowNull: true },
+  feedbackComments: { type: DataTypes.TEXT, allowNull: true },
+  history: { type: DataTypes.JSON, allowNull: true },
+}, {
+  timestamps: true,
+  tableName: 'grievances',
+});
 
-module.exports=mongoose.model('Grievance', grievanceSchema);
+User.hasMany(Grievance, { foreignKey: 'userId' });
+Grievance.belongsTo(User, { foreignKey: 'userId' });
+
+module.exports = Grievance;
