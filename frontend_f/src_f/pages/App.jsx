@@ -7,6 +7,8 @@ import Landing from './Landing';
 import FileComplaint from './FileComplaint';
 import TrackComplaint from './TrackComplaint';
 import OfficerReport from './OfficerReport';
+import ManageUsers from './ManageUsers';
+import SystemConfiguration from './SystemConfiguration';
 
 function App() {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
@@ -36,6 +38,14 @@ function App() {
           <Route
             path="/officer-report"
             element={userInfo ? <OfficerReport /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/manage-users"
+            element={userInfo && userInfo.role === 'admin' ? <ManageUsers /> : <Navigate to="/dashboard" replace />}
+          />
+          <Route
+            path="/system-configuration"
+            element={userInfo && userInfo.role === 'admin' ? <SystemConfiguration /> : <Navigate to="/dashboard" replace />}
           />
 
           {/* Redirects */}

@@ -1,8 +1,16 @@
 import React from 'react';
 import { Search, Bell, UserPlus, Settings, User, FileText, CheckCircle, ChevronDown } from 'lucide-react';
 import './DashboardUI.css';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    localStorage.removeItem('userInfo');
+    navigate('/login');
+  };
+
   return (
     <div className="admin-portal-container">
       {/* Header */}
@@ -22,8 +30,8 @@ const AdminDashboard = () => {
             <Bell size={18} />
             Notifications
           </button>
-          <div className="cl-profile-dropdown">
-            My Profile <ChevronDown size={14} />
+          <div className="cl-profile-dropdown" onClick={handleSignOut} style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#b91c1c', fontWeight: 600}}>
+            Sign Out <ChevronDown size={14} />
           </div>
         </div>
       </header>
@@ -37,7 +45,7 @@ const AdminDashboard = () => {
 
         {/* Big Action Cards */}
         <div className="cl-action-cards-row">
-          <div className="cl-action-card primary">
+          <div className="cl-action-card primary" onClick={() => navigate('/manage-users')}>
             <div className="cl-ac-icon">
               <UserPlus size={24} />
             </div>
@@ -46,7 +54,7 @@ const AdminDashboard = () => {
               <p>View, edit, or remove all system users.</p>
             </div>
           </div>
-          <div className="cl-action-card secondary">
+          <div className="cl-action-card secondary" onClick={() => navigate('/system-configuration')}>
             <div className="cl-ac-icon secondary-icon">
               <Settings size={28} color="#666" />
             </div>
