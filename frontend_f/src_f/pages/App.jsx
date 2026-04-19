@@ -5,6 +5,7 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import Landing from './Landing';
 import FileComplaint from './FileComplaint';
+import TrackComplaint from './TrackComplaint';
 
 function App() {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
@@ -26,6 +27,10 @@ function App() {
           <Route
             path="/file-complaint"
             element={userInfo ? <FileComplaint /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/track-complaint"
+            element={userInfo ? <TrackComplaint /> : <Navigate to="/login" replace />}
           />
 
           {/* Redirects */}

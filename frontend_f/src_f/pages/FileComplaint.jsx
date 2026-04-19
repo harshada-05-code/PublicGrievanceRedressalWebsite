@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Bell, Plus } from 'lucide-react';
+import { User, Plus, Home, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './DashboardUI.css';
 
@@ -8,12 +8,13 @@ const FileComplaint = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [formData, setFormData] = useState({
     category: 'Public Works',
+    address: '',
+    pincode: '',
     description: ''
   });
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('userInfo') || 'null');
-    // For preview purposes, if missing data we supply the mock screenshot defaults
     setUserInfo(data || { name: 'John Doe', email: 'name@example.com', number: '+91 98765 43210' });
   }, []);
 
@@ -25,27 +26,21 @@ const FileComplaint = () => {
 
   return (
     <div className="dashboard-container" style={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
-      {/* Header */}
+      {/* Header Minimalist */}
       <header className="dash-header">
         <div className="logo-container cursor-pointer" onClick={() => navigate('/dashboard')}>
           <span className="logo-badge">JP</span>
           <span style={{fontWeight: 700}}>Jan Shikayat Portal</span>
         </div>
         <div className="header-actions">
-          <button className="icon-btn" style={{border: '1px solid #eaeaea', backgroundColor: 'transparent'}}>हिंदी में देखें</button>
-          
-          <div style={{
-            width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#e5e7eb', 
-            display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
-          }}>
-            <User size={20} color="#6b7280" />
-          </div>
-
-          <div className="profile-menu" style={{background:'#0d5c2c', color:'white', padding: '0.4rem 1rem', borderRadius:'6px', cursor:'pointer'}} 
-               onClick={() => navigate('/register')}>Register</div>
-
-          <User size={22} color="#4b5563" style={{cursor: 'pointer'}} />
-          <Bell size={22} color="#4b5563" style={{cursor: 'pointer'}} />
+          <Home 
+            size={26} 
+            color="#4b5563" 
+            style={{cursor: 'pointer', transition: 'color 0.2s'}} 
+            onClick={() => navigate('/dashboard')} 
+            onMouseOver={(e) => e.currentTarget.style.color = '#0d5c2c'}
+            onMouseOut={(e) => e.currentTarget.style.color = '#4b5563'}
+          />
         </div>
       </header>
 
@@ -108,6 +103,39 @@ const FileComplaint = () => {
                     <option value="Waste">Waste Management</option>
                   </select>
                 </div>
+
+                {/* Address & Pincode Row */}
+                <div style={{display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem'}}>
+                  <div className="form-group" style={{marginBottom: 0}}>
+                    <label className="form-label" style={{display: 'block', marginBottom: '0.5rem'}}>Incident Address / Location</label>
+                    <div className="input-container" style={{position: 'relative', display: 'flex', alignItems: 'center'}}>
+                      <MapPin style={{position: 'absolute', left: '1rem', color: '#64748b'}} size={18} />
+                      <input 
+                        type="text" 
+                        placeholder="Area, Street number, Landmark" 
+                        className="auth-input"
+                        style={{width: '100%', padding: '0.75rem 1rem 0.75rem 2.8rem', border: '1px solid #e2e8f0', borderRadius: '6px'}}
+                        value={formData.address}
+                        onChange={e => setFormData({...formData, address: e.target.value})}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group" style={{marginBottom: 0}}>
+                    <label className="form-label" style={{display: 'block', marginBottom: '0.5rem'}}>Pincode</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. 110001" 
+                      className="auth-input"
+                      style={{width: '100%', padding: '0.75rem 1rem', border: '1px solid #e2e8f0', borderRadius: '6px'}}
+                      value={formData.pincode}
+                      onChange={e => setFormData({...formData, pincode: e.target.value})}
+                      required
+                    />
+                  </div>
+                </div>
+
               </div>
 
               {/* Details */}
@@ -146,7 +174,7 @@ const FileComplaint = () => {
       </main>
 
       {/* Banner */}
-      <footer style={{backgroundColor: '#0d5c2c', color: 'white', textAlign: 'center', padding: '2rem'}}>
+      <footer style={{position: 'relative', backgroundColor: '#0d5c2c', color: 'white', textAlign: 'center', padding: '2rem'}}>
         <h2 style={{fontSize: '1.5rem', fontWeight: '700', marginBottom: '0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem'}}>
           Your Voice, Our Priority
           {/* Subtle star graphic from screenshot */}

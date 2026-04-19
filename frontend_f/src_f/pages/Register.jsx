@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Phone, Lock } from 'lucide-react';
+import { User, Mail, Phone, Lock, ShieldCheck, Building } from 'lucide-react';
 import './Auth.css';
 
 const Register = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', number: '', password: '', confirmPassword: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', number: '', password: '', confirmPassword: '', role: 'citizen' });
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -32,7 +32,7 @@ const Register = () => {
       email: formData.email,
       number: formData.number,
       password: formData.password,
-      role: 'citizen'
+      role: formData.role
     };
 
     existingUsers.push(newUser);
@@ -50,6 +50,32 @@ const Register = () => {
           <p className="auth-subtitle">Register to file and track your complaints</p>
           
           <form onSubmit={handleSubmit}>
+            <div className="form-group account-type-group">
+              <label className="form-label">Account Type</label>
+              <div className="account-type-selector">
+                <button 
+                  type="button" 
+                  className={`account-type-btn ${formData.role === 'citizen' ? 'active' : ''}`}
+                  onClick={() => setFormData({...formData, role: 'citizen'})}
+                >
+                  <User size={18} /> User
+                </button>
+                <button 
+                  type="button" 
+                  className={`account-type-btn ${formData.role === 'officer' ? 'active' : ''}`}
+                  onClick={() => setFormData({...formData, role: 'officer'})}
+                >
+                  <ShieldCheck size={18} /> Officer
+                </button>
+                <button 
+                  type="button" 
+                  className={`account-type-btn ${formData.role === 'admin' ? 'active' : ''}`}
+                  onClick={() => setFormData({...formData, role: 'admin'})}
+                >
+                  <Building size={18} /> Admin
+                </button>
+              </div>
+            </div>
             <div className="form-group">
               <label className="form-label">Full Name</label>
               <div className="input-container">

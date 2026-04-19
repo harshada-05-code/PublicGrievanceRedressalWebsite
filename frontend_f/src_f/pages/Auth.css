@@ -112,7 +112,47 @@
 .auth-link:hover {
   text-decoration: underline;
 }
+/* Account Type Selector Styles */
+.account-type-group {
+  margin-bottom: 1.5rem;
+}
 
+.account-type-selector {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.account-type-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.5rem;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.account-type-btn:hover {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.account-type-btn.active {
+  background-color: #e6f4ea;
+  border-color: #0d5c2c;
+  color: #0d5c2c;
+}
+
+.account-type-btn svg {
+  margin-right: 0.25rem;
+}
 /* Optional split screen graphic area */
 .auth-graphic {
   display: none;

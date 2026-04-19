@@ -9,9 +9,9 @@ import './DashboardUI.css';
 const CitizenDashboard = ({ userInfo }) => {
   const navigate = useNavigate();
   const [complaints] = useState([
-    { id: 'CP-20231026-01', subject: 'Pothole in Sector 7', date: '26 Oct 2023', dept: 'Public Works', status: 'In Progress', action: 'View Details' },
-    { id: 'CP-20231024-05', subject: 'Water Supply Issue', date: '24 Oct 2023', dept: 'Water Authority', status: 'Resolution Received', action: 'View Resolution' },
-    { id: 'CP-20231020-02', subject: 'Streetlight Repair', date: '20 Oct 2023', dept: 'Electricity', status: 'Closed', action: 'View Archive' },
+    // { id: 'CP-20231026-01', subject: 'Pothole in Sector 7', date: '26 Oct 2023', dept: 'Public Works', status: 'In Progress', action: 'View Details' },
+    // { id: 'CP-20231024-05', subject: 'Water Supply Issue', date: '24 Oct 2023', dept: 'Water Authority', status: 'Resolution Received', action: 'View Resolution' },
+    // { id: 'CP-20231020-02', subject: 'Streetlight Repair', date: '20 Oct 2023', dept: 'Electricity', status: 'Closed', action: 'View Archive' },
   ]);
 
   return (
@@ -19,8 +19,8 @@ const CitizenDashboard = ({ userInfo }) => {
       {/* Header */}
       <header className="dash-header">
         <div className="logo-container">
-          <span className="logo-badge">JP</span>
-          <span style={{fontWeight: 700}}>Jan Shikayat Portal</span>
+          <span className="logo-badge">CL</span>
+          <span style={{fontWeight: 700}}>Civic Link Portal</span>
         </div>
         <div className="header-actions">
           <div className="search-bar">
@@ -45,7 +45,7 @@ const CitizenDashboard = ({ userInfo }) => {
               <p>Submit a new grievance to relevant authorities.</p>
             </div>
           </div>
-          <div className="action-card secondary">
+          <div className="action-card secondary" onClick={() => navigate('/track-complaint')}>
             <div className="ac-icon grey"><SearchIcon /></div>
             <div>
               <h3>Check Track Progress</h3>
