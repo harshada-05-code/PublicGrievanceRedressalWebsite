@@ -46,15 +46,6 @@ const CitizenDashboard = ({ userInfo }) => {
           <span style={{fontWeight: 700}}>Civic Link Portal</span>
         </div>
         <div className="header-actions">
-          <div className="search-bar">
-            <SearchIcon size={16} color="#6b7280" />
-            <input 
-              type="text" 
-              placeholder="Search" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
           <div style={{ position: 'relative' }}>
             <button className="icon-btn" onClick={() => setShowNotifications(!showNotifications)}>
               <Bell size={18} /> Notifications
