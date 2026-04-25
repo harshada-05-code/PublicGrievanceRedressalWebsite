@@ -7,11 +7,23 @@ const TrackComplaint = () => {
   const navigate = useNavigate();
   const [searchId, setSearchId] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
+  const [complaint, setComplaint] = useState(null);
+  const [notFound, setNotFound] = useState(false);
 
-  // Mock checking logic
+  // Search and fetch complaint from localStorage
   const handleSearch = (e) => {
     e.preventDefault();
     if(searchId.trim() !== '') {
+      const complaints = JSON.parse(localStorage.getItem('complaints') || '[]');
+      const found = complaints.find(c => c.id === searchId.trim());
+      
+      if(found) {
+        setComplaint(found);
+        setNotFound(false);
+      } else {
+        setComplaint(null);
+        setNotFound(true);
+      }
       setHasSearched(true);
     }
   };
@@ -72,19 +84,24 @@ const TrackComplaint = () => {
         </div>
 
         {/* Results */}
-        {hasSearched && (
+        {hasSearched && complaint && (
           <div style={{background: 'white', padding: '2.5rem', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', border: '1px solid #eaeaea'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem'}}>
               <div>
-                <h2 style={{fontSize: '1.4rem', fontWeight: '700', marginBottom: '0.25rem'}}>Complaint #{searchId || 'CP-20231026-01'}</h2>
-                <div style={{color: '#64748b'}}>Subject: Pothole in Sector 7</div>
-                <div style={{color: '#64748b'}}>Filed on: 26 Oct 2023 | Dept: Public Works</div>
+                <h2 style={{fontSize: '1.4rem', fontWeight: '700', marginBottom: '0.25rem'}}>Complaint #{complaint.id}</h2>
+                <div style={{color: '#64748b'}}>Subject: {complaint.subject}</div>
+                <div style={{color: '#64748b'}}>Filed on: {complaint.date} | Dept: {complaint.dept}</div>
               </div>
               <div style={{
-                backgroundColor: '#fef3c7', color: '#f59e0b', padding: '0.5rem 1rem', 
+                backgroundColor: complaint.status === 'Pending' ? '#fef3c7' : '#dcfce3', 
+                color: complaint.status === 'Pending' ? '#f59e0b' : '#10b981', 
+                padding: '0.5rem 1rem', 
                 borderRadius: '20px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.5rem'
               }}>
-                <Clock size={16} /> In Progress
+                {complaint.status === 'Pending' && <Clock size={16} />}
+                {complaint.status === 'In Progress' && <Clock size={16} />}
+                {complaint.status === 'Closed' && <CheckCircle2 size={16} />}
+                {complaint.status}
               </div>
             </div>
 
@@ -99,40 +116,52 @@ const TrackComplaint = () => {
                   <CheckCircle2 color="#10b981" fill="#dcfce3" size={24} />
                 </div>
                 <h3 style={{fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.25rem'}}>Complaint Registered</h3>
-                <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '0'}}>26 Oct 2023, 10:30 AM</p>
+                <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '0'}}>{complaint.date}</p>
                 <p style={{marginTop: '0.5rem'}}>Your complaint has been successfully registered in the portal.</p>
               </div>
 
               {/* Step 2 */}
               <div style={{position: 'relative', marginBottom: '2rem'}}>
                 <div style={{position: 'absolute', left: '-1.5rem', top: '0', backgroundColor: 'white'}}>
-                  <CheckCircle2 color="#10b981" fill="#dcfce3" size={24} />
+                  {complaint.status !== 'Pending' ? 
+                    <CheckCircle2 color="#10b981" fill="#dcfce3" size={24} /> :
+                    <AlertCircle color="#cbd5e1" fill="white" size={24} />
+                  }
                 </div>
-                <h3 style={{fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.25rem'}}>Assigned to Public Works Department</h3>
-                <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '0'}}>26 Oct 2023, 02:15 PM</p>
+                <h3 style={{fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.25rem'}}>Assigned to {complaint.dept} Department</h3>
+                <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '0'}}>In Processing</p>
                 <p style={{marginTop: '0.5rem'}}>The complaint has been forwarded to the relevant departmental officer.</p>
               </div>
 
               {/* Step 3 */}
-              <div style={{position: 'relative', marginBottom: '2rem'}}>
+              <div style={{position: 'relative', marginBottom: '2rem', opacity: complaint.status === 'Closed' ? 1 : 0.5}}>
                 <div style={{position: 'absolute', left: '-1.5rem', top: '0', backgroundColor: 'white'}}>
-                  <Clock color="#f59e0b" fill="#fef3c7" size={24} />
+                  {complaint.status === 'Closed' ? 
+                    <CheckCircle2 color="#10b981" fill="#dcfce3" size={24} /> :
+                    <Clock color="#f59e0b" fill="#fef3c7" size={24} />
+                  }
                 </div>
-                <h3 style={{fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.25rem'}}>Under Investigation (Current)</h3>
-                <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '0'}}>27 Oct 2023, 09:00 AM</p>
-                <p style={{marginTop: '0.5rem'}}>An officer is currently reviewing the issue on the ground.</p>
+                <h3 style={{fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.25rem'}}>
+                  {complaint.status === 'Closed' ? 'Resolution Provided' : 'Under Investigation (Current)'}
+                </h3>
+                <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '0'}}>
+                  {complaint.status === 'Closed' ? 'Completed' : 'In Progress'}
+                </p>
+                <p style={{marginTop: '0.5rem'}}>
+                  {complaint.status === 'Closed' ? 
+                    'Your grievance has been resolved. Check your email for resolution details.' :
+                    'An officer is currently reviewing the issue on the ground.'
+                  }
+                </p>
               </div>
-
-              {/* Step 4 */}
-              <div style={{position: 'relative', opacity: 0.5}}>
-                <div style={{position: 'absolute', left: '-1.5rem', top: '0', backgroundColor: 'white'}}>
-                  <AlertCircle color="#cbd5e1" size={24} />
-                </div>
-                <h3 style={{fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.25rem'}}>Resolution Provided</h3>
-                <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '0'}}>Pending</p>
-              </div>
-
             </div>
+          </div>
+        )}
+
+        {/* Not Found Message */}
+        {hasSearched && notFound && (
+          <div style={{background: '#fee2e2', border: '1px solid #fecaca', color: '#991b1b', padding: '1.5rem', borderRadius: '8px', textAlign: 'center'}}>
+            <p>Complaint ID <strong>{searchId}</strong> not found. Please check the tracking number and try again.</p>
           </div>
         )}
       </main>

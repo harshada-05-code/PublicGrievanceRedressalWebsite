@@ -42,13 +42,7 @@ exports.getMyGrievances = async (req, res) => {
             return res.status(401).json({ message: 'Not authorized' });
         }
 
-        const grievances = await Grievance.findAll({
-            where: { userId },
-            include: [
-                { model: User, attributes: ['name', 'number'] },
-            ],
-        });
-
+        const grievances = await Grievance.findAllByUserId(userId);
         res.status(200).json({ success: true, data: grievances });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -58,11 +52,7 @@ exports.getMyGrievances = async (req, res) => {
 // @desc    Get ALL grievances (Admin / Global)
 exports.getAllGrievances = async (req, res) => {
     try {
-        const grievances = await Grievance.findAll({
-            include: [
-                { model: User, attributes: ['name', 'number'] },
-            ],
-        });
+        const grievances = await Grievance.findAllGlobal();
 
         res.status(200).json({ success: true, data: grievances });
     } catch (error) {
@@ -77,17 +67,14 @@ exports.updateGrievanceStatus = async (req, res) => {
         const grievance = await Grievance.findByPk(req.params.id);
 
         if (grievance) {
-            grievance.status = status;
-
             const history = Array.isArray(grievance.history) ? grievance.history : [];
             history.push({
                 status,
                 updatedAt: new Date(),
                 remarks: remarks || `Status updated to ${status}`,
             });
-            grievance.history = history;
 
-            const updatedGrievance = await grievance.save();
+            const updatedGrievance = await Grievance.updateStatus(req.params.id, status, history);
             res.json({ success: true, data: updatedGrievance });
         } else {
             res.status(404).json({ message: 'Grievance not found' });

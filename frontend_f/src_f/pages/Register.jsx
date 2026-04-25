@@ -5,41 +5,60 @@ import './Auth.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', number: '', password: '', confirmPassword: '', role: 'citizen' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
     
-    // In-memory array mock registration
-    let existingUsers = [];
+    setLoading(true);
+    
     try {
-      existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-    } catch {}
+      const response = await fetch('http://localhost:5000/api/users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          number: formData.number,
+          password: formData.password,
+          role: formData.role,
+          departmentId: null
+        })
+      });
 
-    const isDuplicate = existingUsers.some(u => u.number === formData.number || u.email === formData.email);
-    if (isDuplicate) {
-      alert("Email or Phone number is already registered.");
-      return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || 'Registration failed. Please try again.');
+        return;
+      }
+
+      // Store user info and token
+      localStorage.setItem('userInfo', JSON.stringify({
+        _id: data._id,
+        name: data.name,
+        number: data.number,
+        role: data.role,
+        token: data.token
+      }));
+      
+      alert('Registration Successful! Redirecting to dashboard...');
+      navigate('/dashboard', { replace: true });
+    } catch (err) {
+      setError('Connection error. Please make sure the backend server is running.');
+      console.error('Registration error:', err);
+    } finally {
+      setLoading(false);
     }
-
-    const newUser = {
-      _id: Date.now().toString(),
-      name: formData.name,
-      email: formData.email,
-      number: formData.number,
-      password: formData.password,
-      role: formData.role
-    };
-
-    existingUsers.push(newUser);
-    localStorage.setItem('registeredUsers', JSON.stringify(existingUsers));
-    
-    alert('Registration Successful! Please login.');
-    navigate('/login');
   };
 
   return (
@@ -48,6 +67,8 @@ const Register = () => {
         <div className="auth-form-card">
           <h2 className="auth-title">Create Account</h2>
           <p className="auth-subtitle">Register to file and track your complaints</p>
+          
+          {error && <div style={{ color: 'red', marginBottom: '1rem', padding: '0.75rem', backgroundColor: '#ffe0e0', borderRadius: '0.5rem' }}>{error}</div>}
           
           <form onSubmit={handleSubmit}>
             <div className="form-group account-type-group">
@@ -146,8 +167,8 @@ const Register = () => {
               </div>
             </div>
 
-            <button type="submit" className="auth-button">
-              Sign Up
+            <button type="submit" className="auth-button" disabled={loading}>
+              {loading ? 'Signing up...' : 'Sign Up'}
             </button>
           </form>
           

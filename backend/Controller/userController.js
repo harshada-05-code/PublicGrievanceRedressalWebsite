@@ -5,7 +5,7 @@ const User = require('../models/User');
 const loginUser = async (req, res) => {
     try {
         const { number, password } = req.body;
-        const user = await User.findOne({ where: { number } });
+        const user = await User.findByNumber(number);
 
         if (!user) {
             return res.status(401).json({ message: 'Invalid number or password' });
@@ -38,7 +38,7 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'Please provide name, number, and password' });
         }
 
-        const existingUser = await User.findOne({ where: { number } });
+        const existingUser = await User.findByNumber(number);
         if (existingUser) {
             return res.status(400).json({ message: 'Number already registered' });
         }

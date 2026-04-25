@@ -4,11 +4,10 @@ const cors = require('cors');
 
 const userRoutes = require('./routes/userRoutes');
 const grievanceRoutes = require('./routes/grievanceRoutes');
-const { sequelize, connectDB } = require('./config/db');
+const { connectDB } = require('./config/db');
+const initDB = require('./config/initDb');
 
 dotenv.config();
-
-connectDB();
 
 const app = express();
 app.use(cors());
@@ -20,8 +19,12 @@ app.get('/', (req, res) => res.send('Server is working'));
 
 const PORT = process.env.PORT || 5000;
 
-sequelize.sync({ alter: true }).then(() => {
+const startServer = async () => {
+  await connectDB();
+  await initDB();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
-});
+};
+
+startServer();

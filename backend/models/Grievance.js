@@ -1,26 +1,62 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
-const User = require('./User');
+const { db } = require('../config/db');
 
-const Grievance = sequelize.define('Grievance', {
-  userId: { type: DataTypes.INTEGER, allowNull: false },
-  assignedOfficerId: { type: DataTypes.INTEGER, allowNull: true },
-  departmentId: { type: DataTypes.INTEGER, allowNull: true },
-  title: { type: DataTypes.STRING, allowNull: false },
-  description: { type: DataTypes.TEXT, allowNull: false },
-  category: { type: DataTypes.ENUM('Roads', 'Water', 'Electricity', 'Waste', 'Other'), allowNull: false },
-  status: { type: DataTypes.ENUM('Pending', 'Assigned', 'In Progress', 'Resolved', 'Reopened'), defaultValue: 'Pending' },
-  address: { type: DataTypes.STRING, allowNull: false },
-  imageUrls: { type: DataTypes.TEXT, allowNull: true },
-  feedbackRating: { type: DataTypes.INTEGER, allowNull: true },
-  feedbackComments: { type: DataTypes.TEXT, allowNull: true },
-  history: { type: DataTypes.JSON, allowNull: true },
-}, {
-  timestamps: true,
-  tableName: 'grievances',
-});
+const Grievance = {
+    create: async (data) => {
+        const { userId, title, description, category, address, imageUrls = [] } = data;
+        const query = 'INSERT INTO grievances (userId, title, description, category, address, imageUrls) VALUES (?, ?, ?, ?, ?, ?)';
+        const [result] = await db.query(query, [userId, title, description, category, address, JSON.stringify(imageUrls)]);
+        return {
+            id: result.insertId, userId, title, description, category, address, imageUrls
+        };
+    },
+    
+    findByPk: async (id) => {
+        const [rows] = await db.query('SELECT * FROM grievances WHERE id = ?', [id]);
+        if (rows[0] && rows[0].history) {
+            rows[0].history = typeof rows[0].history === 'string' ? JSON.parse(rows[0].history) : rows[0].history;
+        }
+        return rows[0];
+    },
 
-User.hasMany(Grievance, { foreignKey: 'userId' });
-Grievance.belongsTo(User, { foreignKey: 'userId' });
+    findAllByUserId: async (userId) => {
+        const query = `
+            SELECT g.*, u.name as userName, u.number as userNumber 
+            FROM grievances g 
+            LEFT JOIN users u ON g.userId = u.id 
+            WHERE g.userId = ?
+        `;
+        const [rows] = await db.query(query, [userId]);
+        return rows.map(row => {
+             return {
+                 ...row,
+                 User: { name: row.userName, number: row.userNumber }
+             };
+        });
+    },
+
+    findAllGlobal: async () => {
+        const query = `
+            SELECT g.*, u.name as userName, u.number as userNumber 
+            FROM grievances g 
+            LEFT JOIN users u ON g.userId = u.id
+        `;
+        const [rows] = await db.query(query);
+        return rows.map(row => {
+             return {
+                 ...row,
+                 User: { name: row.userName, number: row.userNumber }
+             };
+        });
+    },
+
+    updateStatus: async (id, status, historyArray) => {
+        const query = 'UPDATE grievances SET status = ?, history = ? WHERE id = ?';
+        await db.query(query, [status, JSON.stringify(historyArray), id]);
+        
+        // Return updated pseudo-object
+        const updated = await Grievance.findByPk(id);
+        return updated;
+    }
+};
 
 module.exports = Grievance;

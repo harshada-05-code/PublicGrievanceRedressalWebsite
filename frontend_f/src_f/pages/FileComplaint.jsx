@@ -20,7 +20,27 @@ const FileComplaint = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Complaint Submitted successfully! Tracking ID: CP-' + Date.now().toString().slice(-6));
+    const trackingId = 'CP-' + Date.now().toString().slice(-6);
+    
+    // Save complaint to localStorage
+    const complaints = JSON.parse(localStorage.getItem('complaints') || '[]');
+    const newComplaint = {
+      id: trackingId,
+      subject: formData.description.length > 50 ? formData.description.substring(0, 50) + '...' : formData.description,
+      fullDescription: formData.description,
+      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      dept: formData.category,
+      status: 'Pending',
+      address: formData.address,
+      pincode: formData.pincode,
+      description: formData.description,
+      userId: userInfo?._id || 'user',
+      filedAt: new Date().toISOString()
+    };
+    complaints.push(newComplaint);
+    localStorage.setItem('complaints', JSON.stringify(complaints));
+    
+    alert('Complaint Submitted successfully! Tracking ID: ' + trackingId);
     navigate('/dashboard');
   };
 
@@ -81,10 +101,7 @@ const FileComplaint = () => {
                     }}>
                       <User size={14} color="#6b7280" />
                     </div>
-                    <span>{userInfo.name}</span> 
-                    <span style={{color: '#4b5563'}}>
-                      ({userInfo.email || 'name@example.com'}, {userInfo.number})
-                    </span>
+                    <span>{userInfo.name}</span>
                   </div>
                 )}
 

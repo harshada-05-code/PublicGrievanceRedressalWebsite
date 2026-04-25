@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, Bell, FilePlus, Search as SearchIcon, 
   FileText, Hourglass, CheckSquare, Building
@@ -8,16 +8,22 @@ import './DashboardUI.css';
 
 const CitizenDashboard = ({ userInfo }) => {
   const navigate = useNavigate();
+  const [complaints, setComplaints] = useState([]);
+
+  useEffect(() => {
+    const storedComplaints = JSON.parse(localStorage.getItem('complaints') || '[]');
+    setComplaints(storedComplaints);
+  }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem('userInfo');
     navigate('/login');
   };
-  const [complaints] = useState([
-    // { id: 'CP-20231026-01', subject: 'Pothole in Sector 7', date: '26 Oct 2023', dept: 'Public Works', status: 'In Progress', action: 'View Details' },
-    // { id: 'CP-20231024-05', subject: 'Water Supply Issue', date: '24 Oct 2023', dept: 'Water Authority', status: 'Resolution Received', action: 'View Resolution' },
-    // { id: 'CP-20231020-02', subject: 'Streetlight Repair', date: '20 Oct 2023', dept: 'Electricity', status: 'Closed', action: 'View Archive' },
-  ]);
+
+  // Calculate statistics based on complaints
+  const activeComplaints = complaints.filter(c => c.status === 'Pending' || c.status === 'In Progress').length;
+  const awaitingAction = complaints.filter(c => c.status === 'Awaiting Response').length;
+  const resolutionsReceived = complaints.filter(c => c.status === 'Resolution Received' || c.status === 'Closed').length;
 
   return (
     <div className="dashboard-container">
@@ -64,7 +70,7 @@ const CitizenDashboard = ({ userInfo }) => {
           <div className="stat-card border-green">
             <div className="stat-label">Your Active Complaints</div>
             <div className="stat-val-row">
-              <span className="stat-number">3</span>
+              <span className="stat-number">{activeComplaints}</span>
               <FileText className="stat-icon-color green" />
             </div>
             <div className="progress-bar"><div className="fill green" style={{width: '30%'}}></div></div>
@@ -73,7 +79,7 @@ const CitizenDashboard = ({ userInfo }) => {
           <div className="stat-card border-yellow">
             <div className="stat-label">Awaiting Action</div>
             <div className="stat-val-row">
-              <span className="stat-number">1</span>
+              <span className="stat-number">{awaitingAction}</span>
               <Hourglass className="stat-icon-color yellow" />
             </div>
             <div className="progress-bar"><div className="fill yellow" style={{width: '10%'}}></div></div>
@@ -82,7 +88,7 @@ const CitizenDashboard = ({ userInfo }) => {
           <div className="stat-card filled-green">
             <div className="stat-label">Resolutions Received</div>
             <div className="stat-val-row">
-              <span className="stat-number">12</span>
+              <span className="stat-number">{resolutionsReceived}</span>
               <div className="icon-group"><CheckSquare /><Building size={16}/></div>
             </div>
             <div className="progress-bar"><div className="fill white" style={{width: '70%'}}></div></div>
@@ -109,16 +115,22 @@ const CitizenDashboard = ({ userInfo }) => {
               </tr>
             </thead>
             <tbody>
-              {complaints.map((c, i) => (
-                <tr key={i}>
-                  <td>{c.id}</td>
-                  <td>{c.subject}</td>
-                  <td>{c.date}</td>
-                  <td>{c.dept}</td>
-                  <td>{c.status}</td>
-                  <td><a href="#" className="action-link green">{c.action}</a></td>
+              {complaints.length > 0 ? (
+                complaints.map((c, i) => (
+                  <tr key={i}>
+                    <td>{c.id}</td>
+                    <td>{c.subject}</td>
+                    <td>{c.date}</td>
+                    <td>{c.dept}</td>
+                    <td>{c.status}</td>
+                    <td><a href="#" className="action-link green">{c.status === 'Closed' ? 'View Archive' : 'View Details'}</a></td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" style={{textAlign: 'center', padding: '2rem', color: '#999'}}>No complaints filed yet.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

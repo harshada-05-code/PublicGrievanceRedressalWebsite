@@ -103,6 +103,42 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="how-it-works-section">
+        <h2 className="section-title">{t.howItWorks}</h2>
+        <div className="steps-grid">
+          {/* Step 1 */}
+          <div className="step-card">
+            <div className="step-icon-wrapper icon-green" style={{ color: '#0d5c2c' }}>
+              <FileText />
+            </div>
+            <div className="step-number" style={{ color: '#0d5c2c' }}>1</div>
+            <h3 className="step-title">{t.step1}</h3>
+            <p className="step-desc">{t.step1d}</p>
+          </div>
+          
+          {/* Step 2 */}
+          <div className="step-card">
+            <div className="step-icon-wrapper icon-red" style={{ color: '#c53030' }}>
+              <Clock />
+            </div>
+            <div className="step-number" style={{ color: '#c53030' }}>2</div>
+            <h3 className="step-title">{t.step2}</h3>
+            <p className="step-desc">{t.step2d}</p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="step-card">
+            <div className="step-icon-wrapper icon-green" style={{ color: '#059669' }}>
+              <CheckCircle />
+            </div>
+            <div className="step-number" style={{ color: '#059669' }}>3</div>
+            <h3 className="step-title">{t.step3}</h3>
+            <p className="step-desc">{t.step3d}</p>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="stats-section">
         <div className="stat-item">
@@ -142,42 +178,6 @@ const Landing = () => {
         <Link to="/register" className="banner-btn">
           {t.fileComp} <ArrowRight size={18} />
         </Link>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="how-it-works-section">
-        <h2 className="section-title">{t.howItWorks}</h2>
-        <div className="steps-grid">
-          {/* Step 1 */}
-          <div className="step-card">
-            <div className="step-icon-wrapper icon-green" style={{ color: '#0d5c2c' }}>
-              <FileText />
-            </div>
-            <div className="step-number" style={{ color: '#0d5c2c' }}>1</div>
-            <h3 className="step-title">{t.step1}</h3>
-            <p className="step-desc">{t.step1d}</p>
-          </div>
-          
-          {/* Step 2 */}
-          <div className="step-card">
-            <div className="step-icon-wrapper icon-red" style={{ color: '#c53030' }}>
-              <Clock />
-            </div>
-            <div className="step-number" style={{ color: '#c53030' }}>2</div>
-            <h3 className="step-title">{t.step2}</h3>
-            <p className="step-desc">{t.step2d}</p>
-          </div>
-
-          {/* Step 3 */}
-          <div className="step-card">
-            <div className="step-icon-wrapper icon-green" style={{ color: '#059669' }}>
-              <CheckCircle />
-            </div>
-            <div className="step-number" style={{ color: '#059669' }}>3</div>
-            <h3 className="step-title">{t.step3}</h3>
-            <p className="step-desc">{t.step3d}</p>
-          </div>
-        </div>
       </section>
     </div>
   );

@@ -1,12 +1,19 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../config/db');
+const { db } = require('../config/db');
 
-const Department = sequelize.define('Department', {
-    name: { type: DataTypes.STRING, allowNull: false, unique: true },
-    description: { type: DataTypes.TEXT, allowNull: true },
-}, {
-    timestamps: true,
-    tableName: 'departments',
-});
+const Department = {
+    findAll: async () => {
+        const [rows] = await db.query('SELECT * FROM departments');
+        return rows;
+    },
+    findById: async (id) => {
+        const [rows] = await db.query('SELECT * FROM departments WHERE id = ?', [id]);
+        return rows[0];
+    },
+    create: async (data) => {
+        const { name, description } = data;
+        const [result] = await db.query('INSERT INTO departments (name, description) VALUES (?, ?)', [name, description]);
+        return { id: result.insertId, name, description };
+    }
+};
 
 module.exports = Department;
