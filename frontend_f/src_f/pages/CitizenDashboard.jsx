@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Search, Bell, FilePlus, Search as SearchIcon, 
-  FileText, Hourglass, CheckSquare, Building
+  FileText, Hourglass, CheckSquare, Building, User
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './DashboardUI.css';
 
 const CitizenDashboard = ({ userInfo }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [complaints, setComplaints] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
+    // Refresh complaints when component loads or location changes
     const storedComplaints = JSON.parse(localStorage.getItem('complaints') || '[]');
     setComplaints(storedComplaints);
-  }, []);
+  }, [location]);
 
   const handleSignOut = () => {
     localStorage.removeItem('userInfo');
@@ -24,6 +29,13 @@ const CitizenDashboard = ({ userInfo }) => {
   const activeComplaints = complaints.filter(c => c.status === 'Pending' || c.status === 'In Progress').length;
   const awaitingAction = complaints.filter(c => c.status === 'Awaiting Response').length;
   const resolutionsReceived = complaints.filter(c => c.status === 'Resolution Received' || c.status === 'Closed').length;
+
+  const filteredComplaints = complaints.filter(c => {
+    return c.subject?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+           c.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           c.dept?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           c.status?.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <div className="dashboard-container">
@@ -36,10 +48,50 @@ const CitizenDashboard = ({ userInfo }) => {
         <div className="header-actions">
           <div className="search-bar">
             <SearchIcon size={16} color="#6b7280" />
-            <input type="text" placeholder="Search" />
+            <input 
+              type="text" 
+              placeholder="Search" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-          <button className="icon-btn"><Bell size={18} /> Notifications</button>
-          <div className="profile-menu" onClick={handleSignOut} style={{cursor: 'pointer', color: '#b91c1c', fontWeight: 600}}>Sign Out ▾</div>
+          <div style={{ position: 'relative' }}>
+            <button className="icon-btn" onClick={() => setShowNotifications(!showNotifications)}>
+              <Bell size={18} /> Notifications
+            </button>
+            {showNotifications && (
+              <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '8px', backgroundColor: 'white', border: '1px solid #eaeaea', borderRadius: '8px', width: '250px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10 }}>
+                <div style={{ padding: '10px 15px', borderBottom: '1px solid #eaeaea', fontWeight: 600, fontSize: '14px' }}>Notifications</div>
+                <div style={{ padding: '10px 15px', fontSize: '13px', color: '#4b5563', borderBottom: '1px solid #eaeaea' }}>
+                  <strong>System Action</strong><br/>
+                  Your profile has been updated.
+                </div>
+                <div style={{ padding: '10px 15px', fontSize: '13px', color: '#4b5563' }}>
+                  <strong>Welcome</strong><br/>
+                  Welcome to the platform!
+                </div>
+              </div>
+            )}
+          </div>
+          <div style={{ position: 'relative' }}>
+            <div 
+              className="profile-menu icon-btn" 
+              onClick={() => setShowProfileMenu(!showProfileMenu)} 
+              style={{cursor: 'pointer', fontWeight: 600}}
+            >
+              <User size={18} /> Profile ▾
+            </div>
+            {showProfileMenu && (
+              <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '8px', backgroundColor: 'white', border: '1px solid #eaeaea', borderRadius: '8px', width: '150px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 10 }}>
+                <div 
+                  onClick={handleSignOut}
+                  style={{ padding: '10px 15px', color: '#b91c1c', cursor: 'pointer', fontSize: '14px', fontWeight: '500', textAlign: 'center' }}
+                >
+                  Sign Out
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -67,7 +119,11 @@ const CitizenDashboard = ({ userInfo }) => {
 
         {/* Stats Row */}
         <div className="stats-row">
-          <div className="stat-card border-green">
+          <div 
+            className="stat-card border-green" 
+            style={{cursor: 'pointer'}} 
+            onClick={() => setSearchQuery('Pending')}
+          >
             <div className="stat-label">Your Active Complaints</div>
             <div className="stat-val-row">
               <span className="stat-number">{activeComplaints}</span>
@@ -76,7 +132,11 @@ const CitizenDashboard = ({ userInfo }) => {
             <div className="progress-bar"><div className="fill green" style={{width: '30%'}}></div></div>
           </div>
           
-          <div className="stat-card border-yellow">
+          <div 
+            className="stat-card border-yellow" 
+            style={{cursor: 'pointer'}} 
+            onClick={() => setSearchQuery('Awaiting Response')}
+          >
             <div className="stat-label">Awaiting Action</div>
             <div className="stat-val-row">
               <span className="stat-number">{awaitingAction}</span>
@@ -85,18 +145,17 @@ const CitizenDashboard = ({ userInfo }) => {
             <div className="progress-bar"><div className="fill yellow" style={{width: '10%'}}></div></div>
           </div>
 
-          <div className="stat-card filled-green">
+          <div 
+            className="stat-card filled-green" 
+            style={{cursor: 'pointer'}} 
+            onClick={() => setSearchQuery('Closed')}
+          >
             <div className="stat-label">Resolutions Received</div>
             <div className="stat-val-row">
               <span className="stat-number">{resolutionsReceived}</span>
               <div className="icon-group"><CheckSquare /><Building size={16}/></div>
             </div>
             <div className="progress-bar"><div className="fill white" style={{width: '70%'}}></div></div>
-          </div>
-
-          <div className="updates-panel">
-            <h4>Latest System Updates</h4>
-            <p>New tracking feature added,<br/>Department selection improved.</p>
           </div>
         </div>
 
@@ -115,15 +174,26 @@ const CitizenDashboard = ({ userInfo }) => {
               </tr>
             </thead>
             <tbody>
-              {complaints.length > 0 ? (
-                complaints.map((c, i) => (
+              {filteredComplaints.length > 0 ? (
+                filteredComplaints.map((c, i) => (
                   <tr key={i}>
                     <td>{c.id}</td>
                     <td>{c.subject}</td>
                     <td>{c.date}</td>
                     <td>{c.dept}</td>
                     <td>{c.status}</td>
-                    <td><a href="#" className="action-link green">{c.status === 'Closed' ? 'View Archive' : 'View Details'}</a></td>
+                    <td>
+                      <a 
+                        href="#" 
+                        className="action-link green"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate('/track-complaint', { state: { complaintId: c.id } });
+                        }}
+                      >
+                        {c.status === 'Closed' ? 'View Archive' : 'View Details'}
+                      </a>
+                    </td>
                   </tr>
                 ))
               ) : (

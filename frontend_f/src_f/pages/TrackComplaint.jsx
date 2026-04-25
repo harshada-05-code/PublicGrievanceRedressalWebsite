@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, CheckCircle2, Clock, AlertCircle, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './DashboardUI.css';
 
 const TrackComplaint = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchId, setSearchId] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [complaint, setComplaint] = useState(null);
   const [notFound, setNotFound] = useState(false);
 
+  // Check if complaint ID was passed via navigation state
+  useEffect(() => {
+    if(location.state?.complaintId) {
+      setSearchId(location.state.complaintId);
+      searchComplaint(location.state.complaintId);
+    }
+  }, [location.state]);
+
   // Search and fetch complaint from localStorage
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if(searchId.trim() !== '') {
+  const searchComplaint = (id) => {
+    if(id.trim() !== '') {
       const complaints = JSON.parse(localStorage.getItem('complaints') || '[]');
-      const found = complaints.find(c => c.id === searchId.trim());
+      const found = complaints.find(c => c.id === id.trim());
       
       if(found) {
         setComplaint(found);
@@ -26,6 +34,11 @@ const TrackComplaint = () => {
       }
       setHasSearched(true);
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    searchComplaint(searchId);
   };
 
   return (
