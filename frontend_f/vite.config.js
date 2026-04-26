@@ -5,6 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   root: 'src_f',
   publicDir: '../public',
+  build: {
+    outDir: '../dist',
+    emptyOutDir: true,
+  },
   plugins: [react()],
   server: {
     proxy: {
