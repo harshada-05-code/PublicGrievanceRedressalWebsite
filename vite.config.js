@@ -8,6 +8,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 // https://vite.dev/config/
 export default defineConfig({
   root: path.join(__dirname, 'frontend_f', 'src_f'),
+  build: {
+    outDir: path.join(__dirname, 'dist'),
+    emptyOutDir: true,
+  },
   plugins: [react()],
   server: {
     proxy: {
