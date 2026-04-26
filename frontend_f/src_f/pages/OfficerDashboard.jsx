@@ -32,8 +32,16 @@ const OfficerDashboard = () => {
   const [lang, setLang] = useState(localStorage.getItem('appLang') || 'en');
   const [showNotifications, setShowNotifications] = useState(false);
   const [myGrievances, setMyGrievances] = useState([]);
+  const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const t = text[lang];
+
+  useEffect(() => {
+    const data = localStorage.getItem('userInfo');
+    if (data) {
+      setUserInfo(JSON.parse(data));
+    }
+  }, []);
 
   useEffect(() => {
     fetchMyGrievances();
@@ -118,7 +126,11 @@ const OfficerDashboard = () => {
       <main className="cl-main-content">
         {/* Welcome Section */}
         <div className="cl-welcome-section">
-          <h1 className="cl-welcome-title">{t.welcome}</h1>
+          <h1 className="cl-welcome-title">
+            {lang === 'hi' 
+              ? `स्वागत है अधिकारी, ${userInfo?.name || ''}`
+              : `Welcome Officer, ${userInfo?.name || ''}`}
+          </h1>
         </div>
 
         {/* Big Action Cards */}

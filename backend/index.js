@@ -1,3 +1,4 @@
+require('dotenv').config(); 
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -7,7 +8,7 @@ const grievanceRoutes = require('./routes/grievanceRoutes');
 const { connectDB } = require('./config/db');
 const initDB = require('./config/initDb');
 
-dotenv.config();
+// dotenv.config();
 
 const app = express();
 app.use(cors());
