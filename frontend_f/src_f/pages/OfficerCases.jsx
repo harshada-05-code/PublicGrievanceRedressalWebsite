@@ -3,20 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Paperclip, MessageSquare, MapPin, CheckCircle, ChevronDown } from 'lucide-react';
 import './DashboardUI.css';
 
-// Realistic Dummy Data Generator
-const initializeMockCases = () => {
-  const existing = localStorage.getItem('officerCases');
-  if(!existing) {
-    const defaultCases = [
-      { id: '7150009', category: 'Potholes', date: '04-07-2023', location: '12th Cross, Indiranagar', priority: 'High', status: 'Assigned', reporter: 'Andra Kumar', desc: 'Massive pothole causing severe traffic jams and risk of accidents. Please fix immediately.', comments: [] },
-      { id: '7150002', category: 'Streetlights', date: '16-07-2023', location: 'MG Road, near Metro', priority: 'Medium', status: 'In Progress', reporter: 'Rajesh S', desc: 'The streetlights have been flickering for a week making the area unsafe at night.', comments: [{text: 'Technician dispatched to review wiring.', date: '17-07-2023'}] },
-      { id: '7150003', category: 'Waste Management', date: '21-07-2023', location: 'Koramangala 4th Block', priority: 'Low', status: 'Assigned', reporter: 'Simran K', desc: 'Garbage bins overflowing, pickup truck missed our lane this morning.', comments: [] }
-    ];
-    localStorage.setItem('officerCases', JSON.stringify(defaultCases));
-    return defaultCases;
-  }
-  return JSON.parse(existing);
-};
+import { API_ENDPOINTS } from '../config/apiConfig';
 
 const OfficerCases = () => {
   const navigate = useNavigate();
@@ -27,55 +14,76 @@ const OfficerCases = () => {
   const [activeCase, setActiveCase] = useState(null);
   const [newComment, setNewComment] = useState('');
 
+  const fetchCases = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem('userInfo') || 'null');
+      const token = userData?.token;
+      if (!token) return;
+
+      const res = await fetch(API_ENDPOINTS.GET_MY_GRIEVANCES, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCases(data.data || []);
+        if (activeCase) {
+          const refreshedActive = data.data.find(c => c.id === activeCase.id);
+          setActiveCase(refreshedActive || null);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching officer cases:', err);
+    }
+  };
+
   useEffect(() => {
-    setCases(initializeMockCases());
+    fetchCases();
   }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem('userInfo');
-    navigate('/login');
+    navigate('/');
   };
 
-  const saveCases = (updatedList) => {
-    setCases(updatedList);
-    localStorage.setItem('officerCases', JSON.stringify(updatedList));
-  };
-
-  const updateStatus = (newStatus) => {
+  const updateStatus = async (newStatus, commentOverride = null) => {
     if(!activeCase) return;
-    const updated = cases.map(c => {
-      if(c.id === activeCase.id) return { ...c, status: newStatus };
-      return c;
-    });
-    const refreshedActive = updated.find(c => c.id === activeCase.id);
-    saveCases(updated);
-    setActiveCase(refreshedActive);
+    try {
+      const userData = JSON.parse(localStorage.getItem('userInfo') || 'null');
+      const token = userData?.token;
+      
+      const res = await fetch(`${API_ENDPOINTS.CREATE_GRIEVANCE}/${activeCase.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          status: newStatus, 
+          remarks: commentOverride || `Status updated to ${newStatus}` 
+        })
+      });
+      
+      if (res.ok) {
+        fetchCases();
+      }
+    } catch (err) {
+      console.error('Error updating status:', err);
+    }
   };
 
   const addComment = () => {
     if(!newComment.trim() || !activeCase) return;
-    const updated = cases.map(c => {
-      if(c.id === activeCase.id) {
-         return {
-           ...c,
-           comments: [...c.comments, { text: newComment, date: new Date().toLocaleDateString() }]
-         }
-      }
-      return c;
-    });
-    const refreshedActive = updated.find(c => c.id === activeCase.id);
-    saveCases(updated);
-    setActiveCase(refreshedActive);
+    updateStatus(activeCase.status, newComment);
     setNewComment('');
   };
 
   const markResolved = () => {
-    updateStatus('Resolved');
+    updateStatus('Resolved', 'Case formally resolved by officer.');
     alert(`Case ${activeCase.id} explicitly marked as Resolved! Citizen will be notified.`);
   };
 
   const filteredCases = cases.filter(c => 
-    c.id.includes(searchTerm) || c.category.toLowerCase().includes(searchTerm.toLowerCase()) || c.location.toLowerCase().includes(searchTerm.toLowerCase())
+    c.id.toString().includes(searchTerm) || c.category.toLowerCase().includes(searchTerm.toLowerCase()) || c.address.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -126,13 +134,13 @@ const OfficerCases = () => {
               <tbody>
                 {filteredCases.map(c => (
                   <tr key={c.id}>
-                    <td><strong>{c.id}</strong></td>
+                    <td><strong>CP-{c.id}</strong></td>
                     <td>{c.category}</td>
-                    <td>{c.date}</td>
-                    <td><MapPin size={14} style={{display:'inline', color:'#666', marginRight:'4px'}}/> {c.location}</td>
+                    <td>{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td><MapPin size={14} style={{display:'inline', color:'#666', marginRight:'4px'}}/> {c.address}</td>
                     <td>
-                       <span className={`cl-badge ${c.priority === 'High' ? 'cl-badge-high' : c.priority === 'Medium' ? 'cl-badge-medium' : 'cl-badge-low'}`}>
-                         {c.priority}
+                       <span className="cl-badge cl-badge-medium">
+                         Standard
                        </span>
                     </td>
                     <td><span style={{fontWeight: 600, color: c.status === 'Resolved' ? '#15803d' : c.status === 'In Progress' ? '#d97706' : '#1d4ed8'}}>{c.status}</span></td>
@@ -169,15 +177,15 @@ const OfficerCases = () => {
                  </div>
                  <div className="info-block">
                     <span className="info-label">Reporter Name</span>
-                    <strong className="info-val">{activeCase.reporter}</strong>
+                    <strong className="info-val">{activeCase.User?.name || 'Unknown'}</strong>
                  </div>
                  <div className="info-block">
                     <span className="info-label">Location Data</span>
-                    <p className="info-val" style={{color:'#666'}}><MapPin size={14} style={{display:'inline'}}/> {activeCase.location}</p>
+                    <p className="info-val" style={{color:'#666'}}><MapPin size={14} style={{display:'inline'}}/> {activeCase.address}</p>
                  </div>
                  <div className="info-block" style={{marginTop: '1rem'}}>
                     <span className="info-label">Citizen Complaint Description</span>
-                    <p className="info-box-text">{activeCase.desc}</p>
+                    <p className="info-box-text">{activeCase.description}</p>
                  </div>
 
                  {/* Mock Image Box */}
@@ -210,13 +218,13 @@ const OfficerCases = () => {
                      <h3 style={{margin: '0 0 0.8rem 0', fontSize: '1rem', color:'#111', display:'flex', alignItems:'center', gap:'0.4rem'}}><MessageSquare size={16}/> Official Case Notes</h3>
                      
                      <div className="comments-thread">
-                        {activeCase.comments.length === 0 ? (
+                        {(!activeCase.history || activeCase.history.length === 0) ? (
                            <p style={{fontSize:'0.85rem', color:'#9ca3af', fontStyle:'italic', textAlign:'center', marginTop:'1rem'}}>No official comments added yet.</p>
                         ) : (
-                           activeCase.comments.map((cm, idx) => (
+                           activeCase.history.map((cm, idx) => (
                              <div key={idx} className="comment-bubble">
-                               <span className="comment-date">{cm.date}</span>
-                               <p className="comment-text">{cm.text}</p>
+                               <span className="comment-date">{new Date(cm.updatedAt).toLocaleDateString()}</span>
+                               <p className="comment-text">{cm.remarks}</p>
                              </div>
                            ))
                         )}

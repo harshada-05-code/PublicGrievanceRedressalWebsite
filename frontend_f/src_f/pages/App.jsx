@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Register from './Register';
 import Login from './Login';
@@ -11,8 +11,32 @@ import ManageUsers from './ManageUsers';
 import SystemConfiguration from './SystemConfiguration';
 import OfficerCases from './OfficerCases';
 
-function App() {
+// Protected Route Wrapper
+const ProtectedRoute = ({ element, requiredRole = null }) => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || 'null');
+  
+  if (!userInfo) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (requiredRole && userInfo.role !== requiredRole) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return element;
+};
+
+function App() {
+  const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem('userInfo') || 'null'));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUserInfo(JSON.parse(localStorage.getItem('userInfo') || 'null'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   return (
     <Router>
@@ -26,31 +50,31 @@ function App() {
           {/* Protected Routes */}
           <Route
             path="/dashboard"
-            element={userInfo ? <Dashboard /> : <Navigate to="/login" replace />}
+            element={<ProtectedRoute element={<Dashboard />} />}
           />
           <Route
             path="/file-complaint"
-            element={userInfo ? <FileComplaint /> : <Navigate to="/login" replace />}
+            element={<ProtectedRoute element={<FileComplaint />} />}
           />
           <Route
             path="/track-complaint"
-            element={userInfo ? <TrackComplaint /> : <Navigate to="/login" replace />}
+            element={<ProtectedRoute element={<TrackComplaint />} />}
           />
           <Route
             path="/officer-report"
-            element={userInfo ? <OfficerReport /> : <Navigate to="/login" replace />}
+            element={<ProtectedRoute element={<OfficerReport />} />}
           />
           <Route
             path="/manage-users"
-            element={userInfo && userInfo.role === 'admin' ? <ManageUsers /> : <Navigate to="/dashboard" replace />}
+            element={<ProtectedRoute element={<ManageUsers />} requiredRole="admin" />}
           />
           <Route
             path="/system-configuration"
-            element={userInfo && userInfo.role === 'admin' ? <SystemConfiguration /> : <Navigate to="/dashboard" replace />}
+            element={<ProtectedRoute element={<SystemConfiguration />} requiredRole="admin" />}
           />
           <Route
             path="/officer-cases"
-            element={userInfo && userInfo.role === 'department_officer' ? <OfficerCases /> : <Navigate to="/dashboard" replace />}
+            element={<ProtectedRoute element={<OfficerCases />} requiredRole="department_officer" />}
           />
 
           {/* Redirects */}

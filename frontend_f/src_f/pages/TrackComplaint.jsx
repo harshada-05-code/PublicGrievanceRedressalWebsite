@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, CheckCircle2, Clock, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/apiConfig';
 import './DashboardUI.css';
 
 const TrackComplaint = () => {
@@ -19,20 +20,74 @@ const TrackComplaint = () => {
     }
   }, [location.state]);
 
-  // Search and fetch complaint from localStorage
-  const searchComplaint = (id) => {
+  // Search and fetch complaint from backend API, then fallback to localStorage
+  const searchComplaint = async (id) => {
     if(id.trim() !== '') {
-      const complaints = JSON.parse(localStorage.getItem('complaints') || '[]');
-      const found = complaints.find(c => c.id === id.trim());
-      
-      if(found) {
-        setComplaint(found);
-        setNotFound(false);
-      } else {
-        setComplaint(null);
-        setNotFound(true);
+      try {
+        const userData = JSON.parse(localStorage.getItem('userInfo') || 'null');
+        const token = userData?.token;
+
+        if (token) {
+          // Try backend first
+          const response = await fetch(API_ENDPOINTS.GET_MY_GRIEVANCES, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const allComplaints = data.data?.map(g => ({
+              id: 'CP-' + g.id,
+              subject: g.title,
+              fullDescription: g.description,
+              date: new Date(g.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+              dept: g.category,
+              status: g.status || 'Pending',
+              address: g.address,
+              description: g.description,
+              userId: g.userId,
+              filedAt: g.createdAt,
+              backendId: g.id
+            })) || [];
+
+            const found = allComplaints.find(c => c.id === id.trim());
+            if (found) {
+              setComplaint(found);
+              setNotFound(false);
+              setHasSearched(true);
+              return;
+            }
+          }
+        }
+
+        // Fallback to localStorage
+        const complaints = JSON.parse(localStorage.getItem('complaints') || '[]');
+        const found = complaints.find(c => c.id === id.trim());
+        
+        if(found) {
+          setComplaint(found);
+          setNotFound(false);
+        } else {
+          setComplaint(null);
+          setNotFound(true);
+        }
+        setHasSearched(true);
+      } catch (error) {
+        console.error('Error searching complaint:', error);
+        // Fallback to localStorage on error
+        const complaints = JSON.parse(localStorage.getItem('complaints') || '[]');
+        const found = complaints.find(c => c.id === id.trim());
+        
+        if(found) {
+          setComplaint(found);
+          setNotFound(false);
+        } else {
+          setComplaint(null);
+          setNotFound(true);
+        }
+        setHasSearched(true);
       }
-      setHasSearched(true);
     }
   };
 

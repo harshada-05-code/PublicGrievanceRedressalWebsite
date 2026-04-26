@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Phone, Lock, ShieldCheck, Building } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/apiConfig';
 import './Auth.css';
 
 const Register = () => {
@@ -21,7 +22,7 @@ const Register = () => {
     setLoading(true);
     
     try {
-      const response = await fetch('http://localhost:5000/api/users/register', {
+      const response = await fetch(API_ENDPOINTS.REGISTER, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

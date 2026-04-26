@@ -7,6 +7,7 @@ const {
   getMyGrievances,
   getAllGrievances,
   updateGrievanceStatus,
+  assignGrievanceToOfficer,
 } = require('../Controller/grievanceController');
 
 const upload = require('../middleware/uploadMiddleware');
@@ -17,5 +18,6 @@ router.post('/', protect, upload.array('images', 3), addGrievance);
 router.get('/my', protect, getMyGrievances);
 router.get('/', protect, getAllGrievances);
 router.put('/:id', protect, updateGrievanceStatus);
+router.put('/:id/assign', protect, assignGrievanceToOfficer);
 
 module.exports = router;

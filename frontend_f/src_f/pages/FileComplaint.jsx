@@ -1,52 +1,120 @@
 import React, { useState, useEffect } from 'react';
 import { User, Plus, Home, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/apiConfig';
 import './DashboardUI.css';
 
 const FileComplaint = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState(null);
   const [formData, setFormData] = useState({
-    category: 'Public Works',
+    category: 'Roads',
     address: '',
     pincode: '',
     description: ''
   });
+  const [attachedFiles, setAttachedFiles] = useState([]);
+  const fileInputRef = React.useRef(null);
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('userInfo') || 'null');
     setUserInfo(data || { name: 'John Doe', email: 'name@example.com', number: '+91 98765 43210' });
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => {
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+      const isValidType = validTypes.includes(file.type);
+      const isValidSize = file.size <= 5 * 1024 * 1024;
+      
+      if (!isValidType) alert(`${file.name} is not a valid file type. Please upload images or PDFs.`);
+      if (!isValidSize) alert(`${file.name} is too large. Maximum size is 5MB.`);
+      
+      return isValidType && isValidSize;
+    });
+    
+    if (validFiles.length + attachedFiles.length > 3) {
+      alert('Maximum 3 files allowed');
+      return;
+    }
+    
+    setAttachedFiles([...attachedFiles, ...validFiles]);
+  };
+
+  const handleRemoveFile = (index) => {
+    setAttachedFiles(attachedFiles.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const trackingId = 'CP-' + Date.now().toString().slice(-6);
     
-    // Save complaint to localStorage
-    const complaints = JSON.parse(localStorage.getItem('complaints') || '[]');
-    const newComplaint = {
-      id: trackingId,
-      subject: formData.description.length > 50 ? formData.description.substring(0, 50) + '...' : formData.description,
-      fullDescription: formData.description,
-      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-      dept: formData.category,
-      status: 'Pending',
-      address: formData.address,
-      pincode: formData.pincode,
-      description: formData.description,
-      userId: userInfo?._id || 'user',
-      filedAt: new Date().toISOString()
-    };
-    complaints.push(newComplaint);
-    localStorage.setItem('complaints', JSON.stringify(complaints));
-    
-    alert('Complaint Submitted successfully! Tracking ID: ' + trackingId);
-    navigate('/dashboard');
+    try {
+      const userData = JSON.parse(localStorage.getItem('userInfo') || 'null');
+      const token = userData?.token;
+
+      if (!token) {
+        alert('Authentication failed. Please login again.');
+        navigate('/login');
+        return;
+      }
+
+      const submitData = new FormData();
+      submitData.append('title', formData.description.length > 50 ? formData.description.substring(0, 50) + '...' : formData.description);
+      submitData.append('description', formData.description);
+      submitData.append('category', formData.category);
+      submitData.append('address', formData.address);
+      
+      attachedFiles.forEach(file => {
+        submitData.append('images', file);
+      });
+
+      const response = await fetch(API_ENDPOINTS.CREATE_GRIEVANCE, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: submitData
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || 'Failed to submit complaint');
+        console.error('Backend error:', data);
+        return;
+      }
+
+      const complaints = JSON.parse(localStorage.getItem('complaints') || '[]');
+      const trackingId = 'CP-' + (data.data?.id || Date.now().toString().slice(-6));
+      const newComplaint = {
+        id: trackingId,
+        subject: formData.description.length > 50 ? formData.description.substring(0, 50) + '...' : formData.description,
+        fullDescription: formData.description,
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        dept: formData.category,
+        status: 'Pending',
+        address: formData.address,
+        pincode: formData.pincode,
+        description: formData.description,
+        userId: userInfo?._id || 'user',
+        filedAt: new Date().toISOString(),
+        backendId: data.data?.id
+      };
+      complaints.push(newComplaint);
+      localStorage.setItem('complaints', JSON.stringify(complaints));
+      
+      alert('Complaint Submitted successfully! Tracking ID: ' + trackingId);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error submitting complaint:', error);
+      alert('Connection error. Please make sure the backend server is running.');
+    }
   };
 
   return (
     <div className="dashboard-container" style={{display: 'flex', flexDirection: 'column', minHeight: '100vh'}}>
-      {/* Header Minimalist */}
+      {/* Header */}
       <header className="dash-header">
         <div className="logo-container cursor-pointer" onClick={() => navigate('/dashboard')}>
           <span className="logo-badge">JP</span>
@@ -64,7 +132,7 @@ const FileComplaint = () => {
         </div>
       </header>
 
-      {/* Main Form Content */}
+      {/* Main Content */}
       <main className="dash-content" style={{flex: 1, paddingBottom: '4rem'}}>
         <h1 style={{textAlign: 'center', fontSize: '2.5rem', fontWeight: '800', color: '#0d5c2c', marginTop: '1rem', marginBottom: '2rem'}}>
           Grievance Services
@@ -114,10 +182,11 @@ const FileComplaint = () => {
                     value={formData.category}
                     onChange={e => setFormData({...formData, category: e.target.value})}
                   >
-                    <option value="Public Works">Public Works</option>
-                    <option value="Water">Water Authority</option>
+                    <option value="Roads">Roads</option>
+                    <option value="Water">Water</option>
                     <option value="Electricity">Electricity</option>
-                    <option value="Waste">Waste Management</option>
+                    <option value="Waste">Waste</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
@@ -167,15 +236,63 @@ const FileComplaint = () => {
                 ></textarea>
               </div>
 
+              {/* Hidden File Input */}
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                multiple 
+                accept="image/*,.pdf"
+                onChange={handleFileSelect}
+                style={{display: 'none'}}
+              />
+
               {/* Attach Button */}
-              <button type="button" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                backgroundColor: '#dcfce3', color: '#0d5c2c', border: '1px solid #0d5c2c',
-                padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: '500', 
-                cursor: 'pointer', marginBottom: '1.5rem'
-              }}>
+              <button 
+                type="button" 
+                onClick={() => fileInputRef.current?.click()}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                  backgroundColor: '#dcfce3', color: '#0d5c2c', border: '1px solid #0d5c2c',
+                  padding: '0.6rem 1.2rem', borderRadius: '6px', fontWeight: '500', 
+                  cursor: 'pointer', marginBottom: '1.5rem'
+                }}
+              >
                 Attach Documents/Images <Plus size={16} />
               </button>
+
+              {/* Display Attached Files */}
+              {attachedFiles.length > 0 && (
+                <div style={{
+                  backgroundColor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '6px',
+                  padding: '1rem', marginBottom: '1.5rem'
+                }}>
+                  <p style={{fontWeight: '600', marginBottom: '0.5rem', color: '#0d5c2c'}}>
+                    Attached Files ({attachedFiles.length}/3)
+                  </p>
+                  <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                    {attachedFiles.map((file, idx) => (
+                      <li key={idx} style={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        padding: '0.5rem', backgroundColor: 'white', marginBottom: '0.5rem',
+                        borderRadius: '4px', fontSize: '0.9rem'
+                      }}>
+                        <span>{file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                        <button 
+                          type="button"
+                          onClick={() => handleRemoveFile(idx)}
+                          style={{
+                            backgroundColor: '#fca5a5', color: '#991b1b', border: 'none',
+                            padding: '0.3rem 0.6rem', borderRadius: '4px', cursor: 'pointer',
+                            fontSize: '0.85rem', fontWeight: '500'
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* Submit Button */}
               <button type="submit" style={{
@@ -194,7 +311,6 @@ const FileComplaint = () => {
       <footer style={{position: 'relative', backgroundColor: '#0d5c2c', color: 'white', textAlign: 'center', padding: '2rem'}}>
         <h2 style={{fontSize: '1.5rem', fontWeight: '700', marginBottom: '0', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem'}}>
           Your Voice, Our Priority
-          {/* Subtle star graphic from screenshot */}
           <svg width="24" height="24" viewBox="0 0 24 24" fill="#a7f3d0" xmlns="http://www.w3.org/2000/svg" style={{position:'absolute', right: '5%', bottom:'2rem'}}>
             <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
           </svg>

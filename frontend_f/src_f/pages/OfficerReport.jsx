@@ -39,7 +39,12 @@ const OfficerReport = () => {
         </header>
 
         <main className="report-main-body">
-          <h1 className="report-page-title">Officer Performance Report: Officer Singh</h1>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h1 className="report-page-title" style={{ marginBottom: 0 }}>Officer Performance Report: Officer Singh</h1>
+            <button onClick={() => navigate('/dashboard')} style={{ padding: '0.6rem 1.2rem', background: '#0d5c2c', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, transition: 'background 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onMouseEnter={(e) => e.currentTarget.style.background = '#0a4621'} onMouseLeave={(e) => e.currentTarget.style.background = '#0d5c2c'}>
+              <Home size={18} /> Return to Dashboard
+            </button>
+          </div>
           
           {/* Summary Metrics Row */}
           <section className="report-panel">

@@ -42,7 +42,12 @@ exports.getMyGrievances = async (req, res) => {
             return res.status(401).json({ message: 'Not authorized' });
         }
 
-        const grievances = await Grievance.findAllByUserId(userId);
+        let grievances = [];
+        if (req.user.role === 'department_officer') {
+            grievances = await Grievance.findAllByAssignedOfficerId(userId);
+        } else {
+            grievances = await Grievance.findAllByUserId(userId);
+        }
         res.status(200).json({ success: true, data: grievances });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -75,6 +80,29 @@ exports.updateGrievanceStatus = async (req, res) => {
             });
 
             const updatedGrievance = await Grievance.updateStatus(req.params.id, status, history);
+            res.json({ success: true, data: updatedGrievance });
+        } else {
+            res.status(404).json({ message: 'Grievance not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+// @desc    Assign grievance to an officer (Admin Only)
+exports.assignGrievanceToOfficer = async (req, res) => {
+    try {
+        const { officerId } = req.body;
+        const grievance = await Grievance.findByPk(req.params.id);
+
+        if (grievance) {
+            const history = Array.isArray(grievance.history) ? grievance.history : [];
+            history.push({
+                status: 'Assigned',
+                updatedAt: new Date(),
+                remarks: `Assigned to officer ID: ${officerId}`,
+            });
+
+            const updatedGrievance = await Grievance.assignOfficer(req.params.id, officerId, history);
             res.json({ success: true, data: updatedGrievance });
         } else {
             res.status(404).json({ message: 'Grievance not found' });

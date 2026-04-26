@@ -11,6 +11,11 @@ const User = {
         return rows[0];
     },
 
+    findAll: async () => {
+        const [rows] = await db.query('SELECT id, name, number, role, departmentId, createdAt FROM users');
+        return rows;
+    },
+
     create: async (data) => {
         const { name, number, password, role = 'citizen', departmentId = null } = data;
         const query = 'INSERT INTO users (name, number, password, role, departmentId) VALUES (?, ?, ?, ?, ?)';

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Phone, Lock } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/apiConfig';
 import './Auth.css';
 
 const Login = () => {
@@ -15,7 +16,7 @@ const Login = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:5000/api/users/login', {
+      const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,14 +45,8 @@ const Login = () => {
       
       alert('Welcome back, ' + data.name);
       
-      // Redirect based on role
-      if (data.role === 'admin') {
-        navigate('/dashboard', { replace: true });
-      } else if (data.role === 'department_officer') {
-        navigate('/officer-cases', { replace: true });
-      } else {
-        navigate('/dashboard', { replace: true });
-      }
+      // Redirect to dashboard
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setError('Connection error. Please make sure the backend server is running.');
       console.error('Login error:', err);

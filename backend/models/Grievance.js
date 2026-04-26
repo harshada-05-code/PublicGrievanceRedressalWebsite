@@ -34,17 +34,36 @@ const Grievance = {
         });
     },
 
-    findAllGlobal: async () => {
+    findAllByAssignedOfficerId: async (officerId) => {
         const query = `
             SELECT g.*, u.name as userName, u.number as userNumber 
             FROM grievances g 
+            LEFT JOIN users u ON g.userId = u.id 
+            WHERE g.assignedOfficerId = ?
+        `;
+        const [rows] = await db.query(query, [officerId]);
+        return rows.map(row => {
+             return {
+                 ...row,
+                 User: { name: row.userName, number: row.userNumber }
+             };
+        });
+    },
+
+    findAllGlobal: async () => {
+        const query = `
+            SELECT g.*, u.name as userName, u.number as userNumber, 
+                   off.name as officerName 
+            FROM grievances g 
             LEFT JOIN users u ON g.userId = u.id
+            LEFT JOIN users off ON g.assignedOfficerId = off.id
         `;
         const [rows] = await db.query(query);
         return rows.map(row => {
              return {
                  ...row,
-                 User: { name: row.userName, number: row.userNumber }
+                 User: { name: row.userName, number: row.userNumber },
+                 AssignedOfficer: row.officerName ? { name: row.officerName } : null
              };
         });
     },
@@ -56,6 +75,12 @@ const Grievance = {
         // Return updated pseudo-object
         const updated = await Grievance.findByPk(id);
         return updated;
+    },
+
+    assignOfficer: async (id, officerId, historyArray) => {
+        const query = "UPDATE grievances SET assignedOfficerId = ?, status = 'Assigned', history = ? WHERE id = ?";
+        await db.query(query, [officerId, JSON.stringify(historyArray), id]);
+        return await Grievance.findByPk(id);
     }
 };
 

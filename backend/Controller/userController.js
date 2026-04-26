@@ -30,6 +30,24 @@ const loginUser = async (req, res) => {
     }
 };
 
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.findAll();
+        const formattedUsers = users.map(u => ({
+            _id: u.id,
+            name: u.name,
+            number: u.number,
+            role: u.role,
+            isActive: true,
+            departmentId: u.departmentId,
+            createdAt: u.createdAt
+        }));
+        res.status(200).json(formattedUsers);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 const registerUser = async (req, res) => {
     try {
         const { name, number, password, role, departmentId } = req.body;
@@ -63,4 +81,5 @@ const registerUser = async (req, res) => {
 module.exports = {
     registerUser,
     loginUser,
+    getAllUsers,
 };

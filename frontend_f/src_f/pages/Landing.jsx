@@ -14,11 +14,11 @@ import './Landing.css';
 
 const text = {
   en: {
-    portal: "Jan Shikayat Portal",
+    portal: "CivicLink Portal",
     langBtn: "हिंदी में देखें",
     login: "Login",
     register: "Register",
-    heroTitle: "Public Grievance Redressal Portal",
+    heroTitle: "Citizen Grievance Redressal Portal",
     heroSub: "A platform for citizens to voice their concerns and get resolution from government authorities",
     fileComp: "File a Complaint",
     trackComp: "Track Your Complaint",
@@ -37,7 +37,7 @@ const text = {
     step3d: "Receive updates and resolution from the concerned department"
   },
   hi: {
-    portal: "जन शिकायत पोर्टल",
+    portal: "सिविकलिंक पोर्टल",
     langBtn: "View in English",
     login: "लॉग इन",
     register: "पंजीकरण",
@@ -62,11 +62,13 @@ const text = {
 };
 
 const Landing = () => {
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(localStorage.getItem('appLang') || 'en');
   const t = text[lang];
 
   const toggleLang = () => {
-    setLang(lang === 'en' ? 'hi' : 'en');
+    const newLang = lang === 'en' ? 'hi' : 'en';
+    setLang(newLang);
+    localStorage.setItem('appLang', newLang);
   };
 
   return (

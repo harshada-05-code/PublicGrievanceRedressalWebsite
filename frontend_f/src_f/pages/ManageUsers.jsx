@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, UserCheck, UserX, Key, Shield } from 'lucide-react';
+import { API_ENDPOINTS } from '../config/apiConfig';
 import './DashboardUI.css';
 
 const ManageUsers = () => {
@@ -11,19 +12,43 @@ const ManageUsers = () => {
   // New Officer Form State
   const [newOfficerForm, setNewOfficerForm] = useState({ name: '', email: '', number: '', password: '' });
 
-  // Load from Local Storage on mount
+  // Load from Local Storage and Backend on mount
   useEffect(() => {
     loadUsers();
   }, []);
 
-  const loadUsers = () => {
+  const loadUsers = async () => {
     try {
+      // Try to fetch from backend first
+      const response = await fetch(API_ENDPOINTS.GET_ALL_USERS, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        const backendUsers = await response.json();
+        const formattedUsers = backendUsers.map(u => ({ 
+          ...u, 
+          isActive: u.isActive !== false,
+          _id: u._id || u.id
+        }));
+        setUsers(formattedUsers);
+        // Cache in localStorage
+        localStorage.setItem('registeredUsers', JSON.stringify(formattedUsers));
+      } else {
+        // Fallback to localStorage if backend fails
+        const data = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+        const formatted = data.map(u => ({ ...u, isActive: u.isActive !== false }));
+        setUsers(formatted);
+      }
+    } catch (err) {
+      // If backend error, use localStorage
+      console.log('Backend unavailable, using localStorage');
       const data = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-      // Ensure everyone has an isActive flag initialized if missing
       const formatted = data.map(u => ({ ...u, isActive: u.isActive !== false }));
       setUsers(formatted);
-    } catch {
-      setUsers([]);
     }
   };
 
@@ -59,31 +84,49 @@ const ManageUsers = () => {
     saveUsers(updated);
   };
 
-  const handleCreateOfficer = (e) => {
+  const handleCreateOfficer = async (e) => {
     e.preventDefault();
-    if(!newOfficerForm.name || !newOfficerForm.password) return alert("Fill required fields");
+    if(!newOfficerForm.name || !newOfficerForm.password || !newOfficerForm.number) {
+      return alert("Fill required fields");
+    }
     
-    const isDuplicate = users.some(u => u.number === newOfficerForm.number || u.email === newOfficerForm.email);
-    if(isDuplicate) return alert("Email or Phone number is already registered in the system.");
+    const isDuplicate = users.some(u => u.number === newOfficerForm.number);
+    if(isDuplicate) return alert("Phone number is already registered in the system.");
 
-    const newOfficer = {
-      _id: Date.now().toString(),
-      name: newOfficerForm.name,
-      email: newOfficerForm.email,
-      number: newOfficerForm.number,
-      password: newOfficerForm.password,
-      role: 'department_officer',
-      isActive: true
-    };
-    
-    saveUsers([...users, newOfficer]);
-    setNewOfficerForm({ name: '', email: '', number: '', password: '' });
-    alert("New Officer Registered Successfully!");
+    try {
+      // Call backend API to register new officer
+      const response = await fetch(API_ENDPOINTS.REGISTER, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: newOfficerForm.name,
+          number: newOfficerForm.number,
+          password: newOfficerForm.password,
+          role: 'department_officer'
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return alert(data.message || 'Failed to register officer');
+      }
+
+      // Reload users from backend
+      await loadUsers();
+      setNewOfficerForm({ name: '', email: '', number: '', password: '' });
+      alert("New Officer Registered Successfully!");
+    } catch (error) {
+      console.error('Error registering officer:', error);
+      alert('Connection error. Please make sure the backend server is running.');
+    }
   };
 
   const filteredUsers = users.filter(u => 
     (u.name && u.name.toLowerCase().includes(searchTerm.toLowerCase())) || 
-    (u.email && u.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (u.number && u.number.toLowerCase().includes(searchTerm.toLowerCase())) ||
     (u.role && u.role.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
