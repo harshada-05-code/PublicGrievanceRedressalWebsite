@@ -210,17 +210,25 @@ const OfficerDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {myGrievances.length > 0 ? myGrievances.slice(0, 5).map((grievance, idx) => (
+                {myGrievances.length > 0 ? myGrievances.slice(0, 5).map((grievance, idx) => {
+                  const getPriority = (cat) => {
+                    if (['Water', 'Electricity'].includes(cat)) return { label: 'High', class: 'cl-badge-high' };
+                    if (['Roads', 'Waste'].includes(cat)) return { label: 'Medium', class: 'cl-badge-medium' };
+                    return { label: 'Low', class: 'cl-badge-low' };
+                  };
+                  const priority = getPriority(grievance.category);
+                  return (
                   <tr key={idx}>
                     <td>CP-{grievance.id}</td>
                     <td>{grievance.title || 'N/A'}</td>
                     <td>{new Date(grievance.createdAt).toLocaleDateString()}</td>
                     <td>{grievance.User?.name || 'N/A'}</td>
-                    <td><span className="cl-badge cl-badge-high">{grievance.category || 'N/A'}</span></td>
+                    <td><span className={`cl-badge ${priority.class}`}>{priority.label}</span></td>
                     <td>{grievance.status}</td>
                     <td><button onClick={() => navigate('/officer-cases')} className="cl-action-link green" style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}>View</button></td>
                   </tr>
-                )) : (
+                  );
+                }) : (
                   <tr><td colSpan="7" style={{textAlign: 'center', padding: '1rem', color: '#999'}}>No cases assigned</td></tr>
                 )}
               </tbody>

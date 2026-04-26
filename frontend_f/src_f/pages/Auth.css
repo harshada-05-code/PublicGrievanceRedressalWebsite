@@ -13,6 +13,7 @@
 }
 
 .auth-form-card {
+  position: relative;
   background: white;
   padding: 3rem;
   border-radius: 1rem;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Phone, Lock, ShieldCheck, Building } from 'lucide-react';
+import { User, Mail, Phone, Lock, ShieldCheck, Building, Home } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/apiConfig';
 import './Auth.css';
 
@@ -66,6 +66,16 @@ const Register = () => {
     <div className="auth-container">
       <div className="auth-form-wrapper">
         <div className="auth-form-card">
+          <button 
+            type="button"
+            onClick={() => navigate('/')} 
+            title="Return to Homepage"
+            style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
+            onMouseOver={(e) => e.currentTarget.style.color = '#0d5c2c'}
+            onMouseOut={(e) => e.currentTarget.style.color = '#64748b'}
+          >
+            <Home size={20} />
+          </button>
           <h2 className="auth-title">Create Account</h2>
           <p className="auth-subtitle">Register to file and track your complaints</p>
           
@@ -178,7 +188,6 @@ const Register = () => {
           </div>
         </div>
       </div>
-      <div className="auth-graphic"></div>
     </div>
   );
 };

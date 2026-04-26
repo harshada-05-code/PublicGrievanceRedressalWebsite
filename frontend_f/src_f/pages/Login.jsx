@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Phone, Lock } from 'lucide-react';
+import { Phone, Lock, Home } from 'lucide-react';
 import { API_ENDPOINTS } from '../config/apiConfig';
 import './Auth.css';
 
@@ -59,6 +59,16 @@ const Login = () => {
     <div className="auth-container">
       <div className="auth-form-wrapper">
         <div className="auth-form-card">
+          <button 
+            type="button"
+            onClick={() => navigate('/')} 
+            title="Return to Homepage"
+            style={{ position: 'absolute', top: '1.5rem', left: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
+            onMouseOver={(e) => e.currentTarget.style.color = '#0d5c2c'}
+            onMouseOut={(e) => e.currentTarget.style.color = '#64748b'}
+          >
+            <Home size={20} />
+          </button>
           <h2 className="auth-title">Welcome Back</h2>
           <p className="auth-subtitle">Log in to track your complaints and updates</p>
           
@@ -103,7 +113,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <div className="auth-graphic"></div>
     </div>
   );
 };

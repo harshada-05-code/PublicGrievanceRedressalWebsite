@@ -117,8 +117,8 @@ const FileComplaint = () => {
       {/* Header */}
       <header className="dash-header">
         <div className="logo-container cursor-pointer" onClick={() => navigate('/dashboard')}>
-          <span className="logo-badge">JP</span>
-          <span style={{fontWeight: 700}}>Jan Shikayat Portal</span>
+          <span className="logo-badge">CL</span>
+          <span style={{fontWeight: 700}}>CivicLink Portal</span>
         </div>
         <div className="header-actions">
           <Home 

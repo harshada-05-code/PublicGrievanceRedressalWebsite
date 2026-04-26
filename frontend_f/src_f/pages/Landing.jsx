@@ -76,7 +76,7 @@ const Landing = () => {
       {/* Header */}
       <header className="landing-header">
         <div className="logo-container">
-          <span className="logo-badge">JP</span>
+          <span className="logo-badge">CL</span>
           <span>{t.portal}</span>
         </div>
         <div className="header-actions">
