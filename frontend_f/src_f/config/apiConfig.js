@@ -1,5 +1,5 @@
 // Centralized API configuration
-export const API_BASE_URL = '/api';
+export const API_BASE_URL = 'https://publicgrievanceredressalwebsite.onrender.com/api';
 
 // API endpoints
 export const API_ENDPOINTS = {
